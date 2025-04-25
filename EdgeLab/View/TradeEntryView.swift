@@ -4,7 +4,6 @@
 //
 //  Created by Nuwan Mataraarachchi on 2025-04-24.
 //
-
 import SwiftUI
 
 struct TradeEntryView: View {
@@ -12,6 +11,7 @@ struct TradeEntryView: View {
     @State private var date: Date = Date()
     @State private var day: String = ""
     @State private var session: String = "N/A"
+    @State private var isSessionTrading: Bool = false
     @State private var direction: String = "Long"
     @State private var risk: String = ""
     @State private var rr: String = ""
@@ -21,7 +21,7 @@ struct TradeEntryView: View {
     @State private var chartViewURL: String = ""
     @State private var notes: String = ""
 
-    let sessions = ["Asian", "London", "NewYork", "N/A"]
+    let sessions = ["Asian", "London", "NewYork"]
     let directions = ["Long", "Short"]
     let grades = ["A+", "A", "B+", "B", "C+", "C", "C-"]
     let outcomes = ["Win", "Loss", "BE"]
@@ -51,14 +51,27 @@ struct TradeEntryView: View {
                     }
 
                     Group {
-                        Text("Session")
+                        Toggle("Are you trading in a session?", isOn: $isSessionTrading)
                             .font(.caption)
-                        Picker("Select Session", selection: $session) {
-                            ForEach(sessions, id: \.self) {
-                                Text($0)
+
+                        if isSessionTrading {
+                            Text("Session")
+                                .font(.caption)
+                            Picker("Select Session", selection: $session) {
+                                ForEach(sessions, id: \.self) {
+                                    Text($0)
+                                }
                             }
+                            .pickerStyle(SegmentedPickerStyle())
+                        } else {
+                            // If not trading in session, default session to "N/A"
+                            Text("Session: N/A")
+                                .font(.caption2)
+                                .foregroundColor(.gray)
+                                .onAppear {
+                                    session = "N/A"
+                                }
                         }
-                        .pickerStyle(SegmentedPickerStyle())
 
                         Text("Direction")
                             .font(.caption)
