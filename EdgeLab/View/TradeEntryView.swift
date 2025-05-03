@@ -20,6 +20,10 @@ struct TradeEntryView: View {
     @State private var outcome: String = "Win"
     @State private var chartViewURL: String = ""
     @State private var notes: String = ""
+    @State private var showAlert = false
+    @State private var alertMessage = ""
+
+    @ObservedObject private var viewModel = TradeEntryViewModel()
 
     let sessions = ["Asian", "London", "NewYork"]
     let directions = ["Long", "Short"]
@@ -30,7 +34,6 @@ struct TradeEntryView: View {
         NavigationView {
             ScrollView {
                 VStack(alignment: .leading, spacing: 15) {
-
                     Group {
                         Text("Asset")
                             .font(.caption)
@@ -64,7 +67,6 @@ struct TradeEntryView: View {
                             }
                             .pickerStyle(SegmentedPickerStyle())
                         } else {
-                            // If not trading in session, default session to "N/A"
                             Text("Session: N/A")
                                 .font(.caption2)
                                 .foregroundColor(.gray)
@@ -127,43 +129,22 @@ struct TradeEntryView: View {
                         Text("Outcome")
                             .font(.caption)
                         HStack(spacing: 8) {
-                            Button(action: { outcome = "Win" }) {
-                                Text("Win")
-                                    .font(.caption2)
-                                    .padding(6)
-                                    .frame(maxWidth: .infinity)
-                                    .background(outcome == "Win" ? Color.green : Color.gray.opacity(0.4))
-                                    .foregroundColor(.white)
-                                    .cornerRadius(6)
-                            }
-
-                            Button(action: { outcome = "Loss" }) {
-                                Text("Loss")
-                                    .font(.caption2)
-                                    .padding(6)
-                                    .frame(maxWidth: .infinity)
-                                    .background(outcome == "Loss" ? Color.red : Color.gray.opacity(0.4))
-                                    .foregroundColor(.white)
-                                    .cornerRadius(6)
-                            }
-
-                            Button(action: { outcome = "BE" }) {
-                                Text("Breakeven")
-                                    .font(.caption2)
-                                    .padding(6)
-                                    .frame(maxWidth: .infinity)
-                                    .background(outcome == "BE" ? Color.blue : Color.gray.opacity(0.4))
-                                    .foregroundColor(.white)
-                                    .cornerRadius(6)
+                            ForEach(outcomes, id: \.self) { result in
+                                Button(action: { outcome = result }) {
+                                    Text(result == "BE" ? "Breakeven" : result)
+                                        .font(.caption2)
+                                        .padding(6)
+                                        .frame(maxWidth: .infinity)
+                                        .background(outcome == result ? colorForOutcome(result) : Color.gray.opacity(0.4))
+                                        .foregroundColor(.white)
+                                        .cornerRadius(6)
+                                }
                             }
                         }
-                    }
 
-                    Group {
                         Text("Chart View URL")
                             .font(.caption)
-                        TextField("Enter Chart View URL", text: $chartViewURL)
-                            .keyboardType(.URL)
+                        TextField("Paste Chart URL", text: $chartViewURL)
                             .textFieldStyle(RoundedBorderTextFieldStyle())
 
                         Text("Notes")
@@ -173,33 +154,86 @@ struct TradeEntryView: View {
                             .overlay(RoundedRectangle(cornerRadius: 6).stroke(Color.gray.opacity(0.5)))
                     }
 
-                    Button(action: {
-                        // Save logic
-                        print("Trade Saved")
-                    }) {
-                        Text("Save")
+                    Button(action: saveTrade) {
+                        Text("Save Trade")
                             .fontWeight(.bold)
-                            .frame(maxWidth: .infinity)
                             .padding()
+                            .frame(maxWidth: .infinity)
                             .background(Color.blue)
                             .foregroundColor(.white)
-                            .cornerRadius(8)
+                            .cornerRadius(10)
+                            .padding(.top)
                     }
                 }
                 .padding()
             }
-            .navigationTitle("New Trade Entry")
-            .navigationBarTitleDisplayMode(.inline)
+            .navigationTitle("New Trade")
+            .alert(isPresented: $showAlert) {
+                Alert(title: Text("Save Status"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
+            }
         }
     }
 
-    func getDayFromDate(date: Date) -> String {
+    private func getDayFromDate(date: Date) -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = "EEEE"
         return formatter.string(from: date)
     }
-}
 
+    private func saveTrade() {
+        let trade = TradeModel(
+            asset: asset,
+            date: date,
+            day: day,
+            session: session,
+            isSessionTrading: isSessionTrading,
+            direction: direction,
+            risk: risk,
+            rr: rr,
+            entryCriteria: entryCriteria,
+            grade: grade,
+            outcome: outcome,
+            chartViewURL: chartViewURL,
+            notes: notes
+        )
+
+        viewModel.saveTrade(trade: trade) { result in
+            switch result {
+            case .success:
+                alertMessage = "Trade saved successfully!"
+                resetFields()
+            case .failure(let error):
+                alertMessage = "Failed to save trade: \(error.localizedDescription)"
+            }
+            showAlert = true
+        }
+    }
+
+    private func resetFields() {
+        asset = ""
+        date = Date()
+        day = ""
+        session = "N/A"
+        isSessionTrading = false
+        direction = "Long"
+        risk = ""
+        rr = ""
+        entryCriteria = ""
+        grade = "A"
+        outcome = "Win"
+        chartViewURL = ""
+        notes = ""
+    }
+
+    private func colorForOutcome(_ outcome: String) -> Color {
+        switch outcome {
+        case "Win": return .green
+        case "Loss": return .red
+        case "BE": return .blue
+        default: return .gray
+        }
+    }
+}
 struct TradeEntryView_Previews: PreviewProvider {
     static var previews: some View {
         TradeEntryView()

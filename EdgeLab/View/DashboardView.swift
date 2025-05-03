@@ -4,12 +4,7 @@
 //
 //  Created by Nuwan Mataraarachchi on 2025-04-24.
 //
-//
-//  DashboardView.swift
-//  EdgeLab
-//
-//  Created by Nuwan Mataraarachchi on 2025-04-24.
-//
+
 import SwiftUI
 
 struct DashboardView: View {
