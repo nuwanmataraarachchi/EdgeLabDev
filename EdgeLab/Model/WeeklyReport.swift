@@ -22,14 +22,6 @@ class WeeklyReport: ObservableObject {
         self.tradeFrequency = 0
     }
     
-    func calculateMetrics(trades: [Trade]) {
-        self.trades = trades
-        self.tradeFrequency = trades.count
-        self.profitLoss = trades.reduce(0.0) { $0 + $1.profitLoss }
-        let wins = trades.filter { $0.profitLoss > 0 }.count
-        self.winRate = tradeFrequency > 0 ? Double(wins) / Double(tradeFrequency) : 0.0
-    }
-    
     func getReport() -> (winRate: Double, profitLoss: Double, tradeFrequency: Int) {
         return (winRate, profitLoss, tradeFrequency)
     }

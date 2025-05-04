@@ -30,11 +30,4 @@ class PsychologicInsight: Identifiable, ObservableObject {
         self.recommendation = recommendation
         self.trades = trades
     }
-    
-    func generateInsight(trades: [Trade]) {
-        self.trades = trades
-        let totalProfitLoss = trades.reduce(0.0) { $0 + $1.profitLoss }
-        self.insight = totalProfitLoss >= 0 ? "Positive trading behavior" : "Risky trading behavior"
-        self.recommendation = totalProfitLoss >= 0 ? "Maintain strategy" : "Review risk management"
-    }
 }

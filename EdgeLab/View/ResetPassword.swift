@@ -1,15 +1,12 @@
-//
-//  ResetPassword.swift
-//  EdgeLab
-//
-//  Created by user270106 on 4/23/25.
-//
-
 import SwiftUI
+import FirebaseAuth
 
-struct ForgotPassword: View {
+struct ResetPassword: View {
+    @StateObject private var viewModel = SignInViewModel()
     @State private var email: String = ""
     @Environment(\.dismiss) var dismiss
+    @State private var showAlert = false
+    @State private var alertMessage = ""
     
     var body: some View {
         VStack(spacing: 20) {
@@ -42,8 +39,24 @@ struct ForgotPassword: View {
                         .stroke(Color.gray, lineWidth: 1)
                 )
                 .padding(.horizontal, 30)
+                .autocapitalization(.none)
+                .keyboardType(.emailAddress)
 
-            Button(action: {}) {
+            Button(action: {
+                viewModel.sendPasswordReset(email: email) { result in
+                    switch result {
+                    case .success:
+                        alertMessage = viewModel.errorMessage ?? "Password reset email sent successfully."
+                        showAlert = true
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                            dismiss()
+                        }
+                    case .failure(let error):
+                        alertMessage = viewModel.errorMessage ?? "Failed to send reset email: \(error.localizedDescription)"
+                        showAlert = true
+                    }
+                }
+            }) {
                 Text("SEND RESET LINK")
                     .font(.headline)
                     .foregroundColor(.black)
@@ -55,6 +68,7 @@ struct ForgotPassword: View {
                     )
             }
             .padding(.horizontal, 30)
+            .disabled(email.isEmpty)
 
             Text("Use Phone Number Instead")
                 .font(.footnote)
@@ -79,9 +93,12 @@ struct ForgotPassword: View {
         }
         .background(Color.white)
         .navigationBarBackButtonHidden(true)
+        .alert(isPresented: $showAlert) {
+            Alert(title: Text("Reset Password"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
+        }
     }
 }
 
 #Preview {
-    ForgotPassword()
+    ResetPassword()
 }
