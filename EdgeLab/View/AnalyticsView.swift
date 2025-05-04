@@ -1,89 +1,160 @@
-//
 //  AnalyticsView.swift
 //  EdgeLab
 //
 //  Created by Nuwan Mataraarachchi on 2025-04-24.
-
+//
 
 import SwiftUI
 
 struct AnalyticsView: View {
+    @ObservedObject var viewModel = AnalyticsViewModel()
+
     var body: some View {
-        VStack(spacing: 16) {
-            Text("Analytics View")
-                .font(.largeTitle)
-                .fontWeight(.bold)
-                .padding(.top)
-                .foregroundColor(.white)
-            
-            // Stats Rows
-            VStack(spacing: 12) {
-                HStack {
-                    StatBlock(title: "Win Rate", value: "60%", icon: "percent")
-                    StatBlock(title: "Total Trades", value: "150", icon: "number")
-                    StatBlock(title: "Avg Profit", value: "$498.90", icon: "dollarsign.circle")
-                }
-                
-                HStack {
-                    StatBlock(title: "Session Win Rate", value: "75%", icon: "clock.arrow.circlepath")
-                    StatBlock(title: "Losses", value: "50", icon: "chart.bar.xaxis")
-                    StatBlock(title: "Risk/Reward", value: "1:3.5", icon: "info.circle")
-                }
+        ScrollView {
+            VStack(spacing: 16) {
+                header
+                statRows
+                pnlSection
+                recentTrades
+                Spacer()
             }
-            
-            // Placeholder for Accumulative P&L (Graph)
-            VStack(alignment: .leading) {
-                Text("Accumulative P&L")
-                    .font(.headline)
-                    .foregroundColor(.white)
-                
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(Color.gray.opacity(0.4))
-                    .frame(height: 120)
-                    .overlay(
-                        Text("Graph Placeholder\n$4K → -$2K")
-                            .foregroundColor(.gray)
-                    )
-                
-                HStack {
-                    Text("Jan 23, 24")
-                        .foregroundColor(.gray)
-                    Spacer()
-                    Text("Feb 09, 24")
-                        .foregroundColor(.gray)
-                }
-                .font(.caption)
-            }
-            
-            // Last Trades Preview
-            VStack(alignment: .leading, spacing: 6) {
-                Text("Last Five Trades")
-                    .font(.headline)
-                    .foregroundColor(.white)
-                
-                ForEach(sampleTrades.prefix(5), id: \.self) { trade in
-                    HStack {
-                        Text(trade.type)
-                            .fontWeight(.bold)
-                            .foregroundColor(trade.type == "L" ? .green : .red)
-                        Text(trade.asset)
-                            .foregroundColor(.gray)
-                        Spacer()
-                        Text(trade.date)
-                            .foregroundColor(.gray)
-                        Spacer()
-                        Text(trade.pl)
-                            .foregroundColor(trade.pl.contains("-") ? .red : .green)
-                    }
-                }
-            }
-            
-            Spacer()
+            .padding()
+            .background(Color.black)
+            .cornerRadius(12)
         }
-        .padding()
-        .background(Color.black)
-        .cornerRadius(12)
         .navigationBarTitle("Analytics", displayMode: .inline)
+        .onAppear {
+            viewModel.fetchAnalyticsData()
+        }
+    }
+
+    private var header: some View {
+        Text("Analytics View")
+            .font(.title) // Adjusted font size for header
+            .fontWeight(.bold)
+            .padding(.top)
+            .foregroundColor(.white)
+    }
+
+    private var statRows: some View {
+        VStack(spacing: 12) {
+            HStack {
+                StatBlock(title: "Win Rate", value: String(format: "%.2f", viewModel.winRate), icon: "percent")
+                StatBlock(title: "Total Trades", value: "\(viewModel.totalTrades)", icon: "number")
+                StatBlock(title: "Avg Profit", value: String(format: "%.2f", viewModel.avgProfit), icon: "dollarsign.circle")
+            }
+            HStack {
+                VStack(alignment: .leading) {
+                    HStack {
+                        Text("Overall Gain")
+                            .font(.caption)
+                            .foregroundColor(.gray)
+                        Spacer()
+                        Image(systemName: "arrow.triangle.turn.up.right.circle")
+                            .foregroundColor(.white)
+                    }
+                    Text(formattedGain(viewModel.overallGain))
+                        .fontWeight(.bold)
+                        .foregroundColor(viewModel.overallGain >= 0 ? .green : .red)
+                }
+                .padding()
+                .frame(maxWidth: .infinity)
+                .background(Color.gray.opacity(0.3))
+                .cornerRadius(12)
+
+                StatBlock(title: "Losses", value: "\(viewModel.losses)", icon: "chart.bar.xaxis")
+                StatBlock(title: "Risk/Reward", value: String(format: "%.2f", viewModel.riskReward), icon: "info.circle")
+            }
+        }
+    }
+
+    private func formattedGain(_ gain: Double) -> String {
+        if gain >= 0 {
+            return String(format: "+%.0f%%", gain)
+        } else {
+            return String(format: "%.0f%%", gain)
+        }
+    }
+
+    private var pnlSection: some View {
+        VStack(alignment: .leading) {
+            Text("Accumulative P&L")
+                .font(.headline)
+                .foregroundColor(.white)
+
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color.gray.opacity(0.4))
+                .frame(height: 120)
+                .overlay(
+                    Text("Graph Placeholder\n\(String(format: "%.2f", viewModel.accPnl))")
+                        .foregroundColor(.gray)
+                )
+
+            HStack {
+                Text("Jan 23, 24")
+                Spacer()
+                Text("Feb 09, 24")
+            }
+            .foregroundColor(.gray)
+            .font(.caption)
+        }
+    }
+
+    private var recentTrades: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text("Last Five Trades")
+                .font(.headline)
+                .foregroundColor(.white)
+
+            // Header row
+            HStack {
+                Text("Asset")
+                    .font(.caption)
+                    .foregroundColor(.gray)
+                    .frame(width: 100, alignment: .leading) // Fixed width for alignment
+                Spacer()
+                Text("Date")
+                    .font(.caption)
+                    .foregroundColor(.gray)
+                    .frame(width: 120, alignment: .leading) // Fixed width for alignment
+                Spacer()
+                Text("Outcome")
+                    .font(.caption)
+                    .foregroundColor(.gray)
+                    .frame(width: 80, alignment: .leading) // Fixed width for alignment
+            }
+            .padding(.bottom, 2)
+
+            ForEach(viewModel.lastTrades.prefix(5), id: \.self) { trade in
+                HStack {
+                    Text(trade.asset)
+                        .foregroundColor(.gray)
+                        .frame(width: 100, alignment: .leading) // Fixed width for alignment
+                    Spacer()
+                    Text(trade.date)
+                        .foregroundColor(.gray)
+                        .frame(width: 120, alignment: .leading) // Fixed width for alignment
+                    Spacer()
+                    Text(trade.type)
+                        .fontWeight(.bold)
+                        .foregroundColor(colorForType(trade.type))
+                        .frame(width: 80, alignment: .leading) // Fixed width for alignment
+                }
+            }
+        }
+    }
+
+    private func colorForType(_ type: String) -> Color {
+        switch type {
+        case "W":
+            return .green
+        case "L":
+            return .red
+        case "BE":
+            return .blue
+        default:
+            return .gray
+        }
     }
 }
 
@@ -107,7 +178,7 @@ struct StatBlock: View {
                 .foregroundColor(.white)
         }
         .padding()
-        .frame(maxWidth: .infinity)
+        .frame(maxWidth: .infinity, minHeight: 100) // Consistent size for all blocks
         .background(Color.gray.opacity(0.3))
         .cornerRadius(12)
     }
@@ -119,14 +190,6 @@ struct TradePreview: Hashable {
     let date: String
     let pl: String
 }
-
-let sampleTrades: [TradePreview] = [
-    TradePreview(type: "[L]", asset: "INJ", date: "Feb 09, 24", pl: "+$805.61"),
-    TradePreview(type: "[S]", asset: "RUNE", date: "Feb 05, 24", pl: "-$953.17"),
-    TradePreview(type: "[S]", asset: "AVAX", date: "Jan 28, 24", pl: "-$306.44"),
-    TradePreview(type: "[L]", asset: "SOL", date: "Jan 27, 24", pl: "+$1,306.00"),
-    TradePreview(type: "[L]", asset: "ALGO", date: "Jan 23, 24", pl: "-$263.85"),
-]
 
 struct AnalyticsView_Previews: PreviewProvider {
     static var previews: some View {
