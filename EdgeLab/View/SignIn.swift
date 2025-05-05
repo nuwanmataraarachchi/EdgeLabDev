@@ -62,10 +62,8 @@ struct SignIn: View {
                         .foregroundColor(.black)
                         .frame(maxWidth: .infinity)
                         .frame(height: 50)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 8)
-                                .stroke(Color.black, lineWidth: 1)
-                        )
+                        .background(Color.blue)
+                        .cornerRadius(10)
                 }
                 .padding(.horizontal, 30)
 

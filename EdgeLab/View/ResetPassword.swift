@@ -20,17 +20,21 @@ struct ResetPassword: View {
                 .font(.title)
                 .fontWeight(.bold)
 
-            HStack {
-                Image(systemName: "envelope.fill")
-                    .foregroundColor(.gray)
-                    .frame(width: 30, height: 30)
-                Text("Enter your email address and we'll send you a link to reset your password.")
-                    .font(.subheadline)
-                    .foregroundColor(.gray)
-                    .multilineTextAlignment(.center)
+            VStack {
+                HStack {
+                    VStack {
+                        Text("Enter your email address and we'll send you a link to reset your password.")
+                            .font(.subheadline)
+                            .foregroundColor(.gray)
+                            .multilineTextAlignment(.center)
+                        Image(systemName: "envelope.fill")
+                            .foregroundColor(.gray)
+                            .frame(width: 60, height: 60)
+                    }
+                    Spacer()
+                }
+                .padding(.horizontal, 30)
             }
-            .padding(.horizontal, 30)
-
             TextField("@ Email Address", text: $email)
                 .padding()
                 .frame(height: 50)
@@ -62,10 +66,8 @@ struct ResetPassword: View {
                     .foregroundColor(.black)
                     .frame(maxWidth: .infinity)
                     .frame(height: 50)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 8)
-                            .stroke(Color.black, lineWidth: 1)
-                    )
+                    .background(Color.blue)
+                    .cornerRadius(10)
             }
             .padding(.horizontal, 30)
             .disabled(email.isEmpty)

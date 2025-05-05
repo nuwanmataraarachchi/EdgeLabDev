@@ -3,26 +3,27 @@
 //  EdgeLab
 //
 //  Created by Nuwan Mataraarachchi on 2025-04-24.
+//  Updated to include real-time market data on 2025-05-05.
 //
 
 import SwiftUI
 
 struct DashboardView: View {
+    @StateObject private var marketDataViewModel = MarketDataViewModel()
     @State private var winRate = 75.0
     @State private var riskReward = 1.5
     @State private var streak = 5
-    @State private var marketData = "1.23 USD"
     let currentPage = "Home"
-
+    
     var body: some View {
         NavigationView {
             VStack(spacing: 20) {
                 // App Title
-                Text("EdgeLab Dashboard")
+                Text("")
                     .font(.largeTitle)
                     .fontWeight(.bold)
                     .padding(.top)
-
+                
                 // Key Metrics Section
                 HStack(spacing: 15) {
                     MetricCard(title: "Win Rate", value: "\(winRate)%")
@@ -30,23 +31,55 @@ struct DashboardView: View {
                     MetricCard(title: "Streak", value: "\(streak)")
                 }
                 .padding(.horizontal)
-
+                
                 // Market Data Section
-                VStack {
+                VStack(alignment: .leading, spacing: 10) {
                     Text("Market Data")
                         .font(.headline)
                         .padding(.top, 10)
-
-                    Text("Current Market Price: \(marketData)")
-                        .font(.title3)
-                        .padding(.bottom, 10)
-
+                    
+                    if marketDataViewModel.isLoading {
+                        ProgressView()
+                            .frame(maxWidth: .infinity, alignment: .center)
+                    } else if let error = marketDataViewModel.errorMessage {
+                        Text(error)
+                            .foregroundColor(.red)
+                            .font(.subheadline)
+                            .frame(maxWidth: .infinity, alignment: .center)
+                    } else {
+                        ForEach(marketDataViewModel.stockData.sorted(by: { $0.symbol < $1.symbol })) { stock in
+                            Text("\(stock.symbol): $\(String(format: "%.2f", stock.price))")
+                                .font(.title3)
+                                .padding(.vertical, 2)
+                        }
+                        
+                        // Chart for a specific stock (e.g., AAPL)
+                        if !marketDataViewModel.stockData.isEmpty {
+                            MarketDataChart(
+                                stockData: marketDataViewModel.stockData.filter { $0.symbol == "AAPL" },
+                                symbol: "AAPL"
+                            )
+                            .padding(.top, 10)
+                        }
+                    }
+                    
                     Divider()
                 }
                 .padding(.horizontal)
-
+                
+                NavigationLink(destination: WeeklyPerformanceView()) {
+                    Text("Weekly Performance")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .padding()
+                                        .frame(maxWidth: .infinity)
+                                        .background(Color.blue)
+                                        .cornerRadius(10)
+                                }
+                                .padding(.horizontal)
+                
                 Spacer()
-
+                
                 // Tray Bar
                 HStack {
                     BottomTrayButton(icon: "house.fill", label: "Home", destination: DashboardView(), isActive: currentPage == "Home")
@@ -63,6 +96,13 @@ struct DashboardView: View {
                 .shadow(radius: 2)
             }
             .navigationBarHidden(true)
+            .onAppear {
+                // Subscribe to real-time data for specific stock symbols
+                marketDataViewModel.connectWebSocket(symbols: ["AAPL", "TSLA", "MSFT"])
+            }
+            .onDisappear {
+                marketDataViewModel.disconnectWebSocket()
+            }
         }
     }
 }
@@ -70,7 +110,7 @@ struct DashboardView: View {
 struct MetricCard: View {
     let title: String
     let value: String
-
+    
     var body: some View {
         VStack {
             Text(title)
@@ -91,7 +131,7 @@ struct BottomTrayButton<Destination: View>: View {
     let label: String
     let destination: Destination
     let isActive: Bool
-
+    
     var body: some View {
         Group {
             if isActive {
