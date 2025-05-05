@@ -6,45 +6,33 @@
 //
 
 import Foundation
+import FirebaseAuth
 
-// Comment Struct
-struct Comment: Identifiable {
-    let id: UUID
+struct ArticleModel: Identifiable {
+    let id: String
+    let title: String
     let content: String
-    let author: User
+    let category: String
+    let authorId: String
+    let authorName: String
     let date: Date
+    var comments: [CommentModel]
+    var likes: Int
+    var views: Int
+    var likedBy: [String]
+    var viewedBy: [String]
+    let imageUrl: String?
     
-    init(id: UUID = UUID(), content: String, author: User, date: Date = Date()) {
-        self.id = id
-        self.content = content
-        self.author = author
-        self.date = date
+    var likedByCurrentUser: Bool {
+        guard let userId = Auth.auth().currentUser?.uid else { return false }
+        return likedBy.contains(userId)
     }
 }
 
-// Article Class
-class Article: Identifiable, ObservableObject {
-    let id: UUID
-    @Published var title: String
-    @Published var content: String
-    let author: User
+struct CommentModel: Identifiable {
+    let id: String
+    let content: String
+    let authorId: String
+    let authorName: String
     let date: Date
-    @Published private(set) var comments: [Comment]
-    
-    init(id: UUID = UUID(), title: String, content: String, author: User, date: Date = Date()) {
-        self.id = id
-        self.title = title
-        self.content = content
-        self.author = author
-        self.date = date
-        self.comments = []
-    }
-    
-    func addComment(comment: Comment) {
-        comments.append(comment)
-    }
-    
-    func getComments() -> [Comment] {
-        return comments
-    }
 }
