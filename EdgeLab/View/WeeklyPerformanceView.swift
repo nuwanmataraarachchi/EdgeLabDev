@@ -1,14 +1,15 @@
-//
-//  WeeklyPerformanceView.swift
-//  EdgeLab
-//
-//  Created by user270106 on 5/5/25.
-//
-
 import SwiftUI
+import FirebaseAuth
 
 struct WeeklyPerformanceView: View {
-    @StateObject private var report = WeeklyReport(weekStart: Date())
+    @StateObject private var report: WeeklyReport
+    @State private var selectedWeekStart: Date
+    
+    init() {
+        let weekStart = Calendar.current.date(from: Calendar.current.dateComponents([.yearForWeekOfYear, .weekOfYear], from: Date())) ?? Date()
+        self._report = StateObject(wrappedValue: WeeklyReport(weekStart: weekStart))
+        self._selectedWeekStart = State(wrappedValue: weekStart)
+    }
     
     var body: some View {
         NavigationView {
@@ -18,38 +19,82 @@ struct WeeklyPerformanceView: View {
                     Text("Weekly Performance")
                         .font(.title)
                         .fontWeight(.bold)
+                        .foregroundColor(.white)
                         .padding(.top)
+                    
+                    // Week Selector
+                    HStack {
+                        Button(action: {
+                            selectedWeekStart = Calendar.current.date(byAdding: .weekOfYear, value: -1, to: selectedWeekStart) ?? Date()
+                            report.weekStart = selectedWeekStart
+                            report.fetchTrades()
+                        }) {
+                            Image(systemName: "chevron.left")
+                                .foregroundColor(.white)
+                        }
+                        Text(weekRangeString)
+                            .font(.subheadline)
+                            .foregroundColor(.gray)
+                        Button(action: {
+                            selectedWeekStart = Calendar.current.date(byAdding: .weekOfYear, value: 1, to: selectedWeekStart) ?? Date()
+                            report.weekStart = selectedWeekStart
+                            report.fetchTrades()
+                        }) {
+                            Image(systemName: "chevron.right")
+                                .foregroundColor(.white)
+                        }
+                    }
+                    .padding(.horizontal)
                     
                     // Stats Section
                     HStack(spacing: 15) {
                         StatCard(title: "Win Rate", value: "\(String(format: "%.1f", report.winRate))%", color: .green)
                         StatCard(title: "Net P&L", value: "\(String(format: "%.2f", report.profitLoss))", color: report.profitLoss >= 0 ? .green : .red)
+                        StatCard(title: "Trades", value: "\(report.tradeFrequency)", color: .blue)
                     }
                     .padding(.horizontal)
                     
                     // Chart Section
                     VStack(alignment: .leading, spacing: 10) {
+                        Text("Daily P&L")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                        
                         if let errorMessage = report.errorMessage {
                             Text(errorMessage)
                                 .foregroundColor(.red)
                                 .padding(.horizontal)
                         } else {
                             WeeklyPnLChart(dailyPnL: report.dailyPnL)
-                                .frame(height: 350)
+                                .frame(height: 300)
                                 .padding(.horizontal)
+                                .background(Color.gray.opacity(0.2))
+                                .cornerRadius(12)
                         }
                     }
                     
                     Spacer()
                 }
+                .padding()
+                .background(Color.black)
             }
+            .navigationBarTitle("Weekly Performance", displayMode: .inline)
             .navigationBarItems(leading: Button(action: {
-                // Back button action
+                // Handle back navigation if needed
             }) {
                 Image(systemName: "chevron.left")
-                    .foregroundColor(.black)
+                    .foregroundColor(.white)
             })
         }
+        .preferredColorScheme(.dark)
+    }
+    
+    private var weekRangeString: String {
+        let calendar = Calendar.current
+        let weekEnd = calendar.date(byAdding: .day, value: 6, to: selectedWeekStart) ?? selectedWeekStart
+        let formatter = DateFormatter()
+        formatter.dateStyle = .short
+        return "\(formatter.string(from: selectedWeekStart)) - \(formatter.string(from: weekEnd))"
     }
 }
 
@@ -71,9 +116,8 @@ struct StatCard: View {
         }
         .frame(maxWidth: .infinity)
         .padding()
-        .background(Color.white)
+        .background(Color.gray.opacity(0.3))
         .cornerRadius(10)
-        .shadow(radius: 2)
     }
 }
 
@@ -85,44 +129,33 @@ struct WeeklyPnLChart: View {
     var body: some View {
         GeometryReader { geometry in
             let maxPnL = dailyPnL.values.map { abs($0) }.max() ?? 1.0
-            let chartHeight = geometry.size.height - 40 // Leave space for labels
-            let zeroPosition = chartHeight / 2 // Middle of the chart for zero line
-            let yAxisStep = maxPnL / 4 // For Y-axis labels (4 steps above/below zero)
+            let chartHeight = geometry.size.height - 60 // Space for labels
+            let zeroPosition = chartHeight / 2 // Middle for zero line
+            let yAxisStep = maxPnL > 0 ? maxPnL / 4 : 1.0 // Y-axis steps
             
             ZStack {
-                // Y-Axis Labels and Grid Lines
+                // Background Grid with spaced Y-axis labels
                 VStack {
-                    ForEach(-4...4, id: \.self) { step in
-                        if step != 0 { // Skip zero line (drawn separately)
-                            HStack {
-                                Text(String(format: "%.1f", Double(step) * yAxisStep))
-                                    .font(.caption)
-                                    .foregroundColor(.gray)
-                                    .frame(width: 40, alignment: .trailing)
+                    ForEach([-4, -2, 0, 2, 4], id: \.self) { step in
+                        HStack {
+                            Text(String(format: "%.1f", Double(step) * yAxisStep))
+                                .font(.caption)
+                                .foregroundColor(.gray)
+                                .frame(width: 50, alignment: .trailing)
+                            if step != 0 { // Skip grid line for zero (drawn separately)
                                 Rectangle()
                                     .fill(Color.gray.opacity(0.2))
                                     .frame(height: 1)
                             }
-                            .offset(y: -CGFloat(step) * (chartHeight / 8))
                         }
+                        .offset(y: -CGFloat(step) * (chartHeight / 8)) // Increased spacing
                     }
                 }
                 
-                // Zero Line (Dashed)
+                // Zero Line
                 Rectangle()
                     .fill(Color.gray)
                     .frame(height: 1)
-                    .overlay(
-                        Rectangle()
-                            .fill(Color.gray)
-                            .frame(height: 1)
-                            .overlay(
-                                Rectangle()
-                                    .fill(Color.white)
-                                    .frame(height: 1)
-                                    .padding(.horizontal, 1)
-                            )
-                    )
                     .offset(y: zeroPosition - chartHeight / 2)
                 
                 // Bars and Labels
@@ -130,24 +163,25 @@ struct WeeklyPnLChart: View {
                     ForEach(days, id: \.self) { day in
                         VStack {
                             Spacer()
-                            ZStack(alignment: .center) {
-                                if let pnL = dailyPnL[day], pnL != 0 {
-                                    // Bar
-                                    Rectangle()
-                                        .fill(pnL >= 0 ? Color.green : Color.red)
-                                        .frame(width: 30, height: CGFloat(abs(pnL) / maxPnL) * (chartHeight / 2))
-                                        .offset(y: pnL >= 0 ? -CGFloat(abs(pnL) / maxPnL) * (chartHeight / 4) : CGFloat(abs(pnL) / maxPnL) * (chartHeight / 4))
-                                    
-                                    // P&L Label with Background
-                                    Text(String(format: "%.1f", pnL))
-                                        .font(.caption)
-                                        .foregroundColor(.white)
-                                        .padding(.horizontal, 4)
-                                        .padding(.vertical, 2)
-                                        .background(pnL >= 0 ? Color.green : Color.red)
-                                        .cornerRadius(3)
-                                        .offset(y: pnL >= 0 ? -CGFloat(abs(pnL) / maxPnL) * (chartHeight / 4) - 20 : CGFloat(abs(pnL) / maxPnL) * (chartHeight / 4) + 20)
-                                }
+                            if let pnL = dailyPnL[day], pnL != 0 {
+                                // Bar
+                                Rectangle()
+                                    .fill(pnL >= 0 ? Color.green : Color.red)
+                                    .frame(
+                                        width: geometry.size.width / 10,
+                                        height: CGFloat(abs(pnL) / maxPnL) * (chartHeight / 2)
+                                    )
+                                    .offset(y: pnL >= 0 ? -CGFloat(abs(pnL) / maxPnL) * (chartHeight / 4) : CGFloat(abs(pnL) / maxPnL) * (chartHeight / 4))
+                                
+                                // P&L Label
+                                Text(String(format: "%.1f", pnL))
+                                    .font(.caption)
+                                    .foregroundColor(.white)
+                                    .padding(.horizontal, 4)
+                                    .padding(.vertical, 2)
+                                    .background(pnL >= 0 ? Color.green : Color.red)
+                                    .cornerRadius(3)
+                                    .offset(y: pnL >= 0 ? -CGFloat(abs(pnL) / maxPnL) * (chartHeight / 4) - 20 : CGFloat(abs(pnL) / maxPnL) * (chartHeight / 4) + 20)
                             }
                             Spacer()
                             // Day Label
@@ -158,9 +192,8 @@ struct WeeklyPnLChart: View {
                         .frame(maxWidth: .infinity)
                     }
                 }
-                .offset(x: 40) // Offset to make space for Y-axis labels
+                .offset(x: 50) // Space for Y-axis labels
             }
-            .frame(height: chartHeight)
         }
     }
 }
@@ -168,5 +201,6 @@ struct WeeklyPnLChart: View {
 struct WeeklyPerformanceView_Previews: PreviewProvider {
     static var previews: some View {
         WeeklyPerformanceView()
+            .preferredColorScheme(.dark)
     }
 }
