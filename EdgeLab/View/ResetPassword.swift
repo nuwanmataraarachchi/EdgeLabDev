@@ -10,15 +10,16 @@ struct ResetPassword: View {
     
     var body: some View {
         VStack(spacing: 20) {
-            // Logo
             Text("₿")
                 .font(.system(size: 60))
                 .fontWeight(.bold)
+                .foregroundColor(.white)
                 .padding(.top, 40)
 
             Text("FORGOT PASSWORD?")
                 .font(.title)
                 .fontWeight(.bold)
+                .foregroundColor(.white)
 
             VStack {
                 HStack {
@@ -38,6 +39,8 @@ struct ResetPassword: View {
             TextField("@ Email Address", text: $email)
                 .padding()
                 .frame(height: 50)
+                .background(Color.gray.opacity(0.2))
+                .foregroundColor(.white)
                 .overlay(
                     RoundedRectangle(cornerRadius: 8)
                         .stroke(Color.gray, lineWidth: 1)
@@ -45,6 +48,7 @@ struct ResetPassword: View {
                 .padding(.horizontal, 30)
                 .autocapitalization(.none)
                 .keyboardType(.emailAddress)
+                .font(.body)
 
             Button(action: {
                 viewModel.sendPasswordReset(email: email) { result in
@@ -63,7 +67,7 @@ struct ResetPassword: View {
             }) {
                 Text("SEND RESET LINK")
                     .font(.headline)
-                    .foregroundColor(.black)
+                    .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
                     .frame(height: 50)
                     .background(Color.blue)
@@ -73,7 +77,7 @@ struct ResetPassword: View {
             .disabled(email.isEmpty)
 
             Text("Use Phone Number Instead")
-                .font(.footnote)
+                .font(.callout)
                 .foregroundColor(.gray)
             
             Spacer()
@@ -83,9 +87,9 @@ struct ResetPassword: View {
                     dismiss()
                 }) {
                     Image(systemName: "arrow.left")
-                        .foregroundColor(.black)
+                        .foregroundColor(.white)
                     Text("Back to Sign In")
-                        .font(.footnote)
+                        .font(.callout)
                         .foregroundColor(.gray)
                 }
                 Spacer()
@@ -93,7 +97,7 @@ struct ResetPassword: View {
             .padding(.horizontal, 30)
             .padding(.bottom, 40)
         }
-        .background(Color.white)
+        .background(Color.black.edgesIgnoringSafeArea(.all))
         .navigationBarBackButtonHidden(true)
         .alert(isPresented: $showAlert) {
             Alert(title: Text("Reset Password"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
