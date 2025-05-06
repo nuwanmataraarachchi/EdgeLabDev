@@ -1,9 +1,3 @@
-//  AnalyticsView.swift
-//  EdgeLab
-//
-//  Created by Nuwan Mataraarachchi on 2025-04-24.
-//
-
 import SwiftUI
 
 struct AnalyticsView: View {
@@ -22,7 +16,8 @@ struct AnalyticsView: View {
             .background(Color.black)
             .cornerRadius(12)
         }
-        .navigationBarTitle("Analytics", displayMode: .inline)
+        .navigationTitle("Analytics")
+        .navigationBarTitleDisplayMode(.inline)
         .onAppear {
             viewModel.fetchAnalyticsData()
         }
@@ -30,7 +25,7 @@ struct AnalyticsView: View {
 
     private var header: some View {
         Text("Analytics View")
-            .font(.title) // Adjusted font size for header
+            .font(.title)
             .fontWeight(.bold)
             .padding(.top)
             .foregroundColor(.white)
@@ -77,10 +72,23 @@ struct AnalyticsView: View {
     }
 
     private var pnlSection: some View {
-        VStack(alignment: .leading) {
-            Text("Accumulative P&L")
-                .font(.headline)
-                .foregroundColor(.white)
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                Text("Accumulative P&L")
+                    .font(.headline)
+                    .foregroundColor(.white)
+
+                Spacer()
+
+                NavigationLink(destination: SessionAnalyticsView()) {
+                    HStack(spacing: 4) {
+                        Text("Session Based Analysis")
+                        Image(systemName: "arrow.right")
+                    }
+                    .font(.caption)
+                    .foregroundColor(.blue)
+                }
+            }
 
             RoundedRectangle(cornerRadius: 12)
                 .fill(Color.gray.opacity(0.4))
@@ -106,22 +114,21 @@ struct AnalyticsView: View {
                 .font(.headline)
                 .foregroundColor(.white)
 
-            // Header row
             HStack {
                 Text("Asset")
                     .font(.caption)
                     .foregroundColor(.gray)
-                    .frame(width: 100, alignment: .leading) // Fixed width for alignment
+                    .frame(width: 100, alignment: .leading)
                 Spacer()
                 Text("Date")
                     .font(.caption)
                     .foregroundColor(.gray)
-                    .frame(width: 120, alignment: .leading) // Fixed width for alignment
+                    .frame(width: 120, alignment: .leading)
                 Spacer()
                 Text("Outcome")
                     .font(.caption)
                     .foregroundColor(.gray)
-                    .frame(width: 80, alignment: .leading) // Fixed width for alignment
+                    .frame(width: 80, alignment: .leading)
             }
             .padding(.bottom, 2)
 
@@ -129,16 +136,16 @@ struct AnalyticsView: View {
                 HStack {
                     Text(trade.asset)
                         .foregroundColor(.gray)
-                        .frame(width: 100, alignment: .leading) // Fixed width for alignment
+                        .frame(width: 100, alignment: .leading)
                     Spacer()
                     Text(trade.date)
                         .foregroundColor(.gray)
-                        .frame(width: 120, alignment: .leading) // Fixed width for alignment
+                        .frame(width: 120, alignment: .leading)
                     Spacer()
                     Text(trade.type)
                         .fontWeight(.bold)
                         .foregroundColor(colorForType(trade.type))
-                        .frame(width: 80, alignment: .leading) // Fixed width for alignment
+                        .frame(width: 80, alignment: .leading)
                 }
             }
         }
@@ -178,7 +185,7 @@ struct StatBlock: View {
                 .foregroundColor(.white)
         }
         .padding()
-        .frame(maxWidth: .infinity, minHeight: 100) // Consistent size for all blocks
+        .frame(maxWidth: .infinity, minHeight: 100)
         .background(Color.gray.opacity(0.3))
         .cornerRadius(12)
     }
@@ -193,7 +200,9 @@ struct TradePreview: Hashable {
 
 struct AnalyticsView_Previews: PreviewProvider {
     static var previews: some View {
-        AnalyticsView()
-            .preferredColorScheme(.dark)
+        NavigationStack {
+            AnalyticsView()
+                .preferredColorScheme(.dark)
+        }
     }
 }

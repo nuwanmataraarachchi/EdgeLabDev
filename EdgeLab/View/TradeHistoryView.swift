@@ -22,6 +22,7 @@ struct TradeHistoryView: View {
             Text("Trade History")
                 .font(.title2)
                 .bold()
+                .foregroundColor(.primary)
                 .padding(.horizontal)
 
             ScrollView {
@@ -31,10 +32,13 @@ struct TradeHistoryView: View {
                             VStack(alignment: .leading, spacing: 4) {
                                 Text("Date: \(trade.date)")
                                     .font(.caption)
-                                    .foregroundColor(.gray)
+                                    .foregroundColor(.secondary)
                                 Text("Pair: \(trade.asset)")
+                                    .foregroundColor(.primary)
                                 Text("Type: \(trade.direction)")
+                                    .foregroundColor(.primary)
                                 Text("Outcome: \(trade.outcome)")
+                                    .foregroundColor(.primary)
                                 Text("Gain: \(String(format: "%.2f", trade.gain))%")
                                     .foregroundColor(trade.gain >= 0 ? .green : .red)
                                 Text("Notes: \(trade.notes)")
@@ -70,12 +74,11 @@ struct TradeHistoryView: View {
                             }
                         }
                         .padding()
-                        .background(Color(UIColor.systemGray6))
+                        .background(Color(.secondarySystemBackground))
                         .cornerRadius(10)
                         .padding(.horizontal)
                     }
 
-                    // Pagination controls
                     HStack {
                         Button(action: loadPreviousPage) {
                             Text("Previous")
@@ -116,6 +119,7 @@ struct TradeHistoryView: View {
             }
         }
         .padding(.top)
+        .background(Color(.systemBackground))
         .navigationBarTitle("Trade History", displayMode: .inline)
         .sheet(item: $editingTrade) { trade in
             EditNotesView(trade: trade, editedNotes: $editedNotes, saveAction: {
@@ -138,5 +142,13 @@ struct TradeHistoryView: View {
         if currentPage * tradesPerPage < viewModel.trades.count {
             currentPage += 1
         }
+    }
+}
+
+struct TradeHistoryView_Previews: PreviewProvider {
+    static var previews: some View {
+        TradeHistoryView()
+            .preferredColorScheme(.dark) // ✅ Always dark
+            .previewDisplayName("Dark Mode Only")
     }
 }

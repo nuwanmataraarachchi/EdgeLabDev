@@ -7,28 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		10973B2A2DC6817A006120C0 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 10973B292DC6817A006120C0 /* FirebaseAnalytics */; };
-		10973B2C2DC6817A006120C0 /* FirebaseAnalyticsOnDeviceConversion in Frameworks */ = {isa = PBXBuildFile; productRef = 10973B2B2DC6817A006120C0 /* FirebaseAnalyticsOnDeviceConversion */; };
-		10973B2E2DC6817A006120C0 /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 10973B2D2DC6817A006120C0 /* FirebaseAnalyticsWithoutAdIdSupport */; };
-		10973B302DC6817A006120C0 /* FirebaseAppCheck in Frameworks */ = {isa = PBXBuildFile; productRef = 10973B2F2DC6817A006120C0 /* FirebaseAppCheck */; };
-		10973B322DC6817A006120C0 /* FirebaseAppDistribution-Beta in Frameworks */ = {isa = PBXBuildFile; productRef = 10973B312DC6817A006120C0 /* FirebaseAppDistribution-Beta */; };
-		10973B342DC6823D006120C0 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 10973B332DC6823D006120C0 /* FirebaseAuth */; };
-		10973B362DC6823D006120C0 /* FirebaseAuthCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = 10973B352DC6823D006120C0 /* FirebaseAuthCombine-Community */; };
-		10973B382DC6823D006120C0 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 10973B372DC6823D006120C0 /* FirebaseCore */; };
-		10973B3A2DC6823D006120C0 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 10973B392DC6823D006120C0 /* FirebaseStorage */; };
-		10973B3C2DC6823D006120C0 /* FirebaseStorageCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = 10973B3B2DC6823D006120C0 /* FirebaseStorageCombine-Community */; };
-		10973B3E2DC682EF006120C0 /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 10973B3D2DC682EF006120C0 /* FirebaseDatabase */; };
-		10973B402DC682EF006120C0 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 10973B3F2DC682EF006120C0 /* FirebaseFirestore */; };
+		878779092DC66F1900E0B666 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 878779082DC66F1900E0B666 /* FirebaseAnalytics */; };
+		8787790B2DC66F1900E0B666 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 8787790A2DC66F1900E0B666 /* FirebaseAuth */; };
+		8787790D2DC66F1900E0B666 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 8787790C2DC66F1900E0B666 /* FirebaseCore */; };
+		8787790F2DC66F1900E0B666 /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 8787790E2DC66F1900E0B666 /* FirebaseDatabase */; };
+		878779112DC66F1900E0B666 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 878779102DC66F1900E0B666 /* FirebaseFirestore */; };
+		878779132DC66F1900E0B666 /* FirebaseInstallations in Frameworks */ = {isa = PBXBuildFile; productRef = 878779122DC66F1900E0B666 /* FirebaseInstallations */; };
+		878779152DC66F1900E0B666 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 878779142DC66F1900E0B666 /* FirebaseStorage */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		103CF10F2DCA782500065604 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8773420D2DB554680005CED3 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 877342142DB554680005CED3;
-			remoteInfo = EdgeLab;
-		};
 		877342262DB5546A0005CED3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8773420D2DB554680005CED3 /* Project object */;
@@ -46,7 +34,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		103CF10B2DCA782500065604 /* EdgeLabUnitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EdgeLabUnitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		877342152DB554680005CED3 /* EdgeLab.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EdgeLab.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		877342252DB5546A0005CED3 /* EdgeLabTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EdgeLabTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8773422F2DB5546A0005CED3 /* EdgeLabUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EdgeLabUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -71,29 +58,17 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		103CF1082DCA782500065604 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		877342122DB554680005CED3 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				10973B302DC6817A006120C0 /* FirebaseAppCheck in Frameworks */,
-				10973B342DC6823D006120C0 /* FirebaseAuth in Frameworks */,
-				10973B3C2DC6823D006120C0 /* FirebaseStorageCombine-Community in Frameworks */,
-				10973B3A2DC6823D006120C0 /* FirebaseStorage in Frameworks */,
-				10973B2A2DC6817A006120C0 /* FirebaseAnalytics in Frameworks */,
-				10973B402DC682EF006120C0 /* FirebaseFirestore in Frameworks */,
-				10973B322DC6817A006120C0 /* FirebaseAppDistribution-Beta in Frameworks */,
-				10973B2E2DC6817A006120C0 /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */,
-				10973B362DC6823D006120C0 /* FirebaseAuthCombine-Community in Frameworks */,
-				10973B3E2DC682EF006120C0 /* FirebaseDatabase in Frameworks */,
-				10973B382DC6823D006120C0 /* FirebaseCore in Frameworks */,
-				10973B2C2DC6817A006120C0 /* FirebaseAnalyticsOnDeviceConversion in Frameworks */,
+				878779092DC66F1900E0B666 /* FirebaseAnalytics in Frameworks */,
+				8787790D2DC66F1900E0B666 /* FirebaseCore in Frameworks */,
+				8787790F2DC66F1900E0B666 /* FirebaseDatabase in Frameworks */,
+				878779132DC66F1900E0B666 /* FirebaseInstallations in Frameworks */,
+				878779152DC66F1900E0B666 /* FirebaseStorage in Frameworks */,
+				878779112DC66F1900E0B666 /* FirebaseFirestore in Frameworks */,
+				8787790B2DC66F1900E0B666 /* FirebaseAuth in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -130,7 +105,6 @@
 				877342152DB554680005CED3 /* EdgeLab.app */,
 				877342252DB5546A0005CED3 /* EdgeLabTests.xctest */,
 				8773422F2DB5546A0005CED3 /* EdgeLabUITests.xctest */,
-				103CF10B2DCA782500065604 /* EdgeLabUnitTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -138,26 +112,6 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		103CF10A2DCA782500065604 /* EdgeLabUnitTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 103CF1112DCA782500065604 /* Build configuration list for PBXNativeTarget "EdgeLabUnitTests" */;
-			buildPhases = (
-				103CF1072DCA782500065604 /* Sources */,
-				103CF1082DCA782500065604 /* Frameworks */,
-				103CF1092DCA782500065604 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				103CF1102DCA782500065604 /* PBXTargetDependency */,
-			);
-			name = EdgeLabUnitTests;
-			packageProductDependencies = (
-			);
-			productName = EdgeLabUnitTests;
-			productReference = 103CF10B2DCA782500065604 /* EdgeLabUnitTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 		877342142DB554680005CED3 /* EdgeLab */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 877342392DB5546A0005CED3 /* Build configuration list for PBXNativeTarget "EdgeLab" */;
@@ -175,18 +129,13 @@
 			);
 			name = EdgeLab;
 			packageProductDependencies = (
-				10973B292DC6817A006120C0 /* FirebaseAnalytics */,
-				10973B2B2DC6817A006120C0 /* FirebaseAnalyticsOnDeviceConversion */,
-				10973B2D2DC6817A006120C0 /* FirebaseAnalyticsWithoutAdIdSupport */,
-				10973B2F2DC6817A006120C0 /* FirebaseAppCheck */,
-				10973B312DC6817A006120C0 /* FirebaseAppDistribution-Beta */,
-				10973B332DC6823D006120C0 /* FirebaseAuth */,
-				10973B352DC6823D006120C0 /* FirebaseAuthCombine-Community */,
-				10973B372DC6823D006120C0 /* FirebaseCore */,
-				10973B392DC6823D006120C0 /* FirebaseStorage */,
-				10973B3B2DC6823D006120C0 /* FirebaseStorageCombine-Community */,
-				10973B3D2DC682EF006120C0 /* FirebaseDatabase */,
-				10973B3F2DC682EF006120C0 /* FirebaseFirestore */,
+				878779082DC66F1900E0B666 /* FirebaseAnalytics */,
+				8787790A2DC66F1900E0B666 /* FirebaseAuth */,
+				8787790C2DC66F1900E0B666 /* FirebaseCore */,
+				8787790E2DC66F1900E0B666 /* FirebaseDatabase */,
+				878779102DC66F1900E0B666 /* FirebaseFirestore */,
+				878779122DC66F1900E0B666 /* FirebaseInstallations */,
+				878779142DC66F1900E0B666 /* FirebaseStorage */,
 			);
 			productName = EdgeLab;
 			productReference = 877342152DB554680005CED3 /* EdgeLab.app */;
@@ -245,13 +194,9 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1630;
+				LastSwiftUpdateCheck = 1620;
 				LastUpgradeCheck = 1620;
 				TargetAttributes = {
-					103CF10A2DCA782500065604 = {
-						CreatedOnToolsVersion = 16.3;
-						TestTargetID = 877342142DB554680005CED3;
-					};
 					877342142DB554680005CED3 = {
 						CreatedOnToolsVersion = 16.2;
 					};
@@ -275,7 +220,8 @@
 			mainGroup = 8773420C2DB554680005CED3;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				10973B282DC6817A006120C0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				878779072DC66F1900E0B666 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				87E6B2642DC7755C00784863 /* XCRemoteSwiftPackageReference "SwiftCharts" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 877342162DB554680005CED3 /* Products */;
@@ -285,19 +231,11 @@
 				877342142DB554680005CED3 /* EdgeLab */,
 				877342242DB5546A0005CED3 /* EdgeLabTests */,
 				8773422E2DB5546A0005CED3 /* EdgeLabUITests */,
-				103CF10A2DCA782500065604 /* EdgeLabUnitTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		103CF1092DCA782500065604 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		877342132DB554680005CED3 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -322,13 +260,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		103CF1072DCA782500065604 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		877342112DB554680005CED3 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -353,11 +284,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		103CF1102DCA782500065604 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 877342142DB554680005CED3 /* EdgeLab */;
-			targetProxy = 103CF10F2DCA782500065604 /* PBXContainerItemProxy */;
-		};
 		877342272DB5546A0005CED3 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 877342142DB554680005CED3 /* EdgeLab */;
@@ -371,42 +297,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		103CF1122DCA782500065604 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.appfolks.EdgeLabUnitTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/EdgeLab.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/EdgeLab";
-			};
-			name = Debug;
-		};
-		103CF1132DCA782500065604 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.appfolks.EdgeLabUnitTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/EdgeLab.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/EdgeLab";
-			};
-			name = Release;
-		};
 		877342372DB5546A0005CED3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -653,15 +543,6 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		103CF1112DCA782500065604 /* Build configuration list for PBXNativeTarget "EdgeLabUnitTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				103CF1122DCA782500065604 /* Debug */,
-				103CF1132DCA782500065604 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		877342102DB554680005CED3 /* Build configuration list for PBXProject "EdgeLab" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -701,7 +582,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		10973B282DC6817A006120C0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+		878779072DC66F1900E0B666 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
 			requirement = {
@@ -709,68 +590,51 @@
 				minimumVersion = 11.12.0;
 			};
 		};
+		87E6B2642DC7755C00784863 /* XCRemoteSwiftPackageReference "SwiftCharts" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/i-schuetz/SwiftCharts.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.6.5;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		10973B292DC6817A006120C0 /* FirebaseAnalytics */ = {
+		878779082DC66F1900E0B666 /* FirebaseAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 10973B282DC6817A006120C0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			package = 878779072DC66F1900E0B666 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseAnalytics;
 		};
-		10973B2B2DC6817A006120C0 /* FirebaseAnalyticsOnDeviceConversion */ = {
+		8787790A2DC66F1900E0B666 /* FirebaseAuth */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 10973B282DC6817A006120C0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseAnalyticsOnDeviceConversion;
-		};
-		10973B2D2DC6817A006120C0 /* FirebaseAnalyticsWithoutAdIdSupport */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 10973B282DC6817A006120C0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseAnalyticsWithoutAdIdSupport;
-		};
-		10973B2F2DC6817A006120C0 /* FirebaseAppCheck */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 10973B282DC6817A006120C0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseAppCheck;
-		};
-		10973B312DC6817A006120C0 /* FirebaseAppDistribution-Beta */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 10973B282DC6817A006120C0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = "FirebaseAppDistribution-Beta";
-		};
-		10973B332DC6823D006120C0 /* FirebaseAuth */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 10973B282DC6817A006120C0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			package = 878779072DC66F1900E0B666 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseAuth;
 		};
-		10973B352DC6823D006120C0 /* FirebaseAuthCombine-Community */ = {
+		8787790C2DC66F1900E0B666 /* FirebaseCore */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 10973B282DC6817A006120C0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = "FirebaseAuthCombine-Community";
-		};
-		10973B372DC6823D006120C0 /* FirebaseCore */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 10973B282DC6817A006120C0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			package = 878779072DC66F1900E0B666 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseCore;
 		};
-		10973B392DC6823D006120C0 /* FirebaseStorage */ = {
+		8787790E2DC66F1900E0B666 /* FirebaseDatabase */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 10973B282DC6817A006120C0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseStorage;
-		};
-		10973B3B2DC6823D006120C0 /* FirebaseStorageCombine-Community */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 10973B282DC6817A006120C0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = "FirebaseStorageCombine-Community";
-		};
-		10973B3D2DC682EF006120C0 /* FirebaseDatabase */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 10973B282DC6817A006120C0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			package = 878779072DC66F1900E0B666 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseDatabase;
 		};
-		10973B3F2DC682EF006120C0 /* FirebaseFirestore */ = {
+		878779102DC66F1900E0B666 /* FirebaseFirestore */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 10973B282DC6817A006120C0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			package = 878779072DC66F1900E0B666 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseFirestore;
+		};
+		878779122DC66F1900E0B666 /* FirebaseInstallations */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 878779072DC66F1900E0B666 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseInstallations;
+		};
+		878779142DC66F1900E0B666 /* FirebaseStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 878779072DC66F1900E0B666 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseStorage;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

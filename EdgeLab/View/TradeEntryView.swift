@@ -4,6 +4,7 @@
 //
 //  Created by Nuwan Mataraarachchi on 2025-04-24.
 //
+
 import SwiftUI
 
 struct TradeEntryView: View {
@@ -37,11 +38,15 @@ struct TradeEntryView: View {
                     Group {
                         Text("Asset")
                             .font(.caption)
+                            .foregroundColor(.primary)
                         TextField("Enter Asset", text: $asset)
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                            .padding(10)
+                            .background(Color(UIColor.secondarySystemBackground))
+                            .cornerRadius(6)
 
                         Text("Date")
                             .font(.caption)
+                            .foregroundColor(.primary)
                         DatePicker("Select Date", selection: $date, displayedComponents: .date)
                             .onChange(of: date) { newDate in
                                 day = getDayFromDate(date: newDate)
@@ -49,6 +54,7 @@ struct TradeEntryView: View {
 
                         Text("Day")
                             .font(.caption)
+                            .foregroundColor(.primary)
                         Text(day.isEmpty ? "Select Date First" : day)
                             .foregroundColor(day.isEmpty ? .gray : .primary)
                     }
@@ -60,6 +66,7 @@ struct TradeEntryView: View {
                         if isSessionTrading {
                             Text("Session")
                                 .font(.caption)
+                                .foregroundColor(.primary)
                             Picker("Select Session", selection: $session) {
                                 ForEach(sessions, id: \.self) {
                                     Text($0)
@@ -77,6 +84,7 @@ struct TradeEntryView: View {
 
                         Text("Direction")
                             .font(.caption)
+                            .foregroundColor(.primary)
                         HStack {
                             ForEach(directions, id: \.self) { option in
                                 Button(action: {
@@ -97,20 +105,27 @@ struct TradeEntryView: View {
                     Group {
                         Text("Risk")
                             .font(.caption)
+                            .foregroundColor(.primary)
                         TextField("Enter Risk", text: $risk)
                             .keyboardType(.decimalPad)
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                            .padding(10)
+                            .background(Color(UIColor.secondarySystemBackground))
+                            .cornerRadius(6)
 
                         Text("RR (Risk/Reward)")
                             .font(.caption)
+                            .foregroundColor(.primary)
                         TextField("Enter RR", text: $rr)
                             .keyboardType(.decimalPad)
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                            .padding(10)
+                            .background(Color(UIColor.secondarySystemBackground))
+                            .cornerRadius(6)
                     }
 
                     Group {
                         Text("Grade")
                             .font(.caption)
+                            .foregroundColor(.primary)
                         Picker("Select Grade", selection: $grade) {
                             ForEach(grades, id: \.self) {
                                 Text($0)
@@ -120,14 +135,18 @@ struct TradeEntryView: View {
 
                         Text("Entry Criteria")
                             .font(.caption)
+                            .foregroundColor(.primary)
                         TextEditor(text: $entryCriteria)
                             .frame(height: 80)
-                            .overlay(RoundedRectangle(cornerRadius: 6).stroke(Color.gray.opacity(0.5)))
+                            .padding(4)
+                            .background(Color(UIColor.secondarySystemBackground))
+                            .cornerRadius(6)
                     }
 
                     Group {
                         Text("Outcome")
                             .font(.caption)
+                            .foregroundColor(.primary)
                         HStack(spacing: 8) {
                             ForEach(outcomes, id: \.self) { result in
                                 Button(action: { outcome = result }) {
@@ -144,14 +163,20 @@ struct TradeEntryView: View {
 
                         Text("Chart View URL")
                             .font(.caption)
+                            .foregroundColor(.primary)
                         TextField("Paste Chart URL", text: $chartViewURL)
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                            .padding(10)
+                            .background(Color(UIColor.secondarySystemBackground))
+                            .cornerRadius(6)
 
                         Text("Notes")
                             .font(.caption)
+                            .foregroundColor(.primary)
                         TextEditor(text: $notes)
                             .frame(height: 80)
-                            .overlay(RoundedRectangle(cornerRadius: 6).stroke(Color.gray.opacity(0.5)))
+                            .padding(4)
+                            .background(Color(UIColor.secondarySystemBackground))
+                            .cornerRadius(6)
                     }
 
                     Button(action: saveTrade) {
@@ -168,10 +193,12 @@ struct TradeEntryView: View {
                 .padding()
             }
             .navigationTitle("New Trade")
+            .background(Color(UIColor.systemBackground)) // adapts to dark/light
             .alert(isPresented: $showAlert) {
                 Alert(title: Text("Save Status"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
             }
         }
+        .preferredColorScheme(.dark) // Force dark mode
     }
 
     private func getDayFromDate(date: Date) -> String {
@@ -234,6 +261,7 @@ struct TradeEntryView: View {
         }
     }
 }
+
 struct TradeEntryView_Previews: PreviewProvider {
     static var previews: some View {
         TradeEntryView()
