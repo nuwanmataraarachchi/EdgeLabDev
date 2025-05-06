@@ -1,13 +1,5 @@
-//
-//  WeeklyReport.swift
-//  EdgeLab
-//
-//  Created by user270106 on 5/3/25.
-//
-
 import Foundation
 import FirebaseFirestore
-import FirebaseAuth
 import Combine
 
 class WeeklyReport: ObservableObject {
@@ -26,7 +18,6 @@ class WeeklyReport: ObservableObject {
     init(weekStart: Date) {
         self.weekStart = calendar.startOfDay(for: weekStart)
         
-        // Initialize daily PnL with default values for all days
         let days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
         dailyPnL = Dictionary(uniqueKeysWithValues: days.map { ($0, 0.0) })
         
@@ -34,15 +25,10 @@ class WeeklyReport: ObservableObject {
     }
     
     func fetchWeeklyTrades() {
-        guard let userId = Auth.auth().currentUser?.uid else {
-            errorMessage = "User not signed in."
-            return
-        }
-        
         isLoading = true
         
-        // Adjust weekStart to the start of the week (Monday)
-        let components = calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: weekStart)
+        var components = calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: weekStart)
+        components.weekday = 2 // Monday
         guard let adjustedWeekStart = calendar.date(from: components),
               let weekEnd = calendar.date(byAdding: .day, value: 7, to: adjustedWeekStart) else {
             errorMessage = "Failed to calculate week range."
@@ -52,19 +38,9 @@ class WeeklyReport: ObservableObject {
         
         self.weekStart = adjustedWeekStart
         
-        // Get the formatted date range for display purposes
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "MMM d"
-        let startDateStr = dateFormatter.string(from: adjustedWeekStart)
-        let endDateStr = dateFormatter.string(from: weekEnd)
-        
-        print("Fetching trades from \(startDateStr) to \(endDateStr) for user: \(userId)")
-        
         db.collection("trades")
-            .whereField("userId", isEqualTo: userId)
             .whereField("date", isGreaterThanOrEqualTo: Timestamp(date: adjustedWeekStart))
             .whereField("date", isLessThan: Timestamp(date: weekEnd))
-            .order(by: "date", descending: false)
             .getDocuments { [weak self] (querySnapshot, error) in
                 guard let self = self else { return }
                 
@@ -72,20 +48,12 @@ class WeeklyReport: ObservableObject {
                 
                 if let error = error {
                     self.errorMessage = "Error fetching trades: \(error.localizedDescription)"
-                    print(self.errorMessage!)
                     return
                 }
-                
-                guard let documents = querySnapshot?.documents, !documents.isEmpty else {
-                    self.errorMessage = "No trades found for the selected week."
-                    print("No trades found for the week of \(startDateStr) to \(endDateStr)")
-                    return
-                }
-                
-                print("Found \(documents.count) trades for the week")
                 
                 var trades: [TradeModel] = []
-                for doc in documents {
+                
+                for doc in querySnapshot?.documents ?? [] {
                     let data = doc.data()
                     let trade = TradeModel(
                         id: UUID(uuidString: doc.documentID) ?? UUID(),
@@ -113,6 +81,8 @@ class WeeklyReport: ObservableObject {
     private func processWeeklyTrades(_ trades: [TradeModel]) {
         let days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
         dailyPnL = Dictionary(uniqueKeysWithValues: days.map { ($0, 0.0) })
+        
+        tradeFrequency = trades.count
         
         let winTrades = trades.filter { $0.outcome.lowercased() == "win" }
         let lossTrades = trades.filter { $0.outcome.lowercased() == "loss" }
@@ -147,11 +117,7 @@ class WeeklyReport: ObservableObject {
         }
         
         profitLoss = totalPnL
-        tradeFrequency = trades.count
         errorMessage = trades.isEmpty ? "No trades found for this week." : nil
-        
-        print("Processed \(trades.count) trades. Win rate: \(winRate)%, Net P&L: \(profitLoss)")
-        print("Daily P&L: \(dailyPnL)")
     }
     
     func refreshData() {
@@ -165,26 +131,5 @@ class WeeklyReport: ObservableObject {
         
         self.weekStart = calendar.startOfDay(for: newWeekStart)
         fetchWeeklyTrades()
-    }
-}
-
-extension TradeModel {
-    init(id: String, asset: String, date: Date, day: String, session: String, isSessionTrading: Bool, direction: String, risk: String, rr: String, entryCriteria: String, grade: String, outcome: String, chartViewURL: String, notes: String) {
-        self.init(
-            id: UUID(uuidString: id) ?? UUID(),
-            asset: asset,
-            date: date,
-            day: day,
-            session: session,
-            isSessionTrading: isSessionTrading,
-            direction: direction,
-            risk: risk,
-            rr: rr,
-            entryCriteria: entryCriteria,
-            grade: grade,
-            outcome: outcome,
-            chartViewURL: chartViewURL,
-            notes: notes
-        )
     }
 }
