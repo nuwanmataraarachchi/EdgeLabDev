@@ -38,10 +38,7 @@ struct DashboardView: View {
                         .font(.headline)
                         .padding(.top, 10)
                     
-                    if marketDataViewModel.isLoading {
-                        ProgressView()
-                            .frame(maxWidth: .infinity, alignment: .center)
-                    } else if let error = marketDataViewModel.errorMessage {
+                    if let error = marketDataViewModel.errorMessage {
                         Text(error)
                             .foregroundColor(.red)
                             .font(.subheadline)
@@ -69,6 +66,17 @@ struct DashboardView: View {
                 
                 NavigationLink(destination: WeeklyPerformanceView()) {
                     Text("Weekly Performance")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .padding()
+                                        .frame(maxWidth: .infinity)
+                                        .background(Color.blue)
+                                        .cornerRadius(10)
+                                }
+                                .padding(.horizontal)
+                
+                NavigationLink(destination: CommunityView()) {
+                    Text("Community")
                         .font(.headline)
                         .foregroundColor(.white)
                         .padding()

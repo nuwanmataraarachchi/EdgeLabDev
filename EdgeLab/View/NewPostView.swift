@@ -181,7 +181,6 @@ struct NewPostView: View {
                         dismiss()
                     },
                     secondaryButton: .cancel(Text("Cancel")) {
-                        // Stay on the same page, do nothing
                     }
                 )
             }

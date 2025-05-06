@@ -120,12 +120,6 @@ struct CommunityView: View {
                     EmptyView()
                 }
             }
-            .navigationBarItems(leading: Button(action: {
-                // Back button action
-            }) {
-                Image(systemName: "chevron.left")
-                    .foregroundColor(.black)
-            })
         }
     }
 }

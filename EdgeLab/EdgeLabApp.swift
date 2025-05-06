@@ -25,7 +25,7 @@ struct EdgeLabApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            SignIn()
         }
     }
 }
