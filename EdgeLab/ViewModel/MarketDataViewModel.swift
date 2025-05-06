@@ -2,7 +2,7 @@
 //  MarketDataViewModel.swift
 //  EdgeLab
 //
-//  Created on 2025-05-05.
+//  Created by user270106 on 2025-05-05.
 //
 
 import Foundation
@@ -19,7 +19,7 @@ class MarketDataViewModel: ObservableObject {
     func connectWebSocket(symbols: [String]) {
         guard let url = URL(string: "wss://socket.polygon.io/stocks?apiKey=\(apiKey)") else {
             self.errorMessage = "Invalid WebSocket URL"
-            fetchStockData(symbols: symbols) // Fallback to REST
+            fetchStockData(symbols: symbols)
             return
         }
         
@@ -27,14 +27,32 @@ class MarketDataViewModel: ObservableObject {
         webSocketTask = URLSession.shared.webSocketTask(with: url)
         webSocketTask?.resume()
         
-        // Authenticate and subscribe to symbols
         let authMessage = "{\"action\":\"auth\",\"params\":\"\(apiKey)\"}"
         let subscribeMessage = "{\"action\":\"subscribe\",\"params\":\"T.\(symbols.joined(separator: ",T."))\"}"
         
+        print("Connecting to WebSocket with auth: \(authMessage)")
+        print("Subscribing to: \(subscribeMessage)")
         sendWebSocketMessage(authMessage)
         sendWebSocketMessage(subscribeMessage)
         
         receiveWebSocketMessages()
+    }
+    
+    func reconnectWebSocket(symbols: [String], retryCount: Int = 3) {
+        guard retryCount > 0 else {
+            DispatchQueue.main.async {
+                self.errorMessage = "Failed to reconnect WebSocket after multiple attempts"
+                self.fetchStockData(symbols: symbols)
+            }
+            return
+        }
+        print("Retrying WebSocket connection, attempts left: \(retryCount)")
+        connectWebSocket(symbols: symbols)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+            if self.webSocketTask?.state != .running {
+                self.reconnectWebSocket(symbols: symbols, retryCount: retryCount - 1)
+            }
+        }
     }
     
     private func sendWebSocketMessage(_ message: String) {
@@ -44,7 +62,12 @@ class MarketDataViewModel: ObservableObject {
                 DispatchQueue.main.async {
                     self.isLoading = false
                     self.errorMessage = "WebSocket send error: \(error.localizedDescription)"
+                    print("WebSocket send error: \(error.localizedDescription)")
+                    let symbols = self.stockData.map({ $0.symbol }).uniqued()
+                    self.reconnectWebSocket(symbols: Array(symbols))
                 }
+            } else {
+                print("WebSocket message sent successfully: \(message)")
             }
         }
     }
@@ -55,72 +78,132 @@ class MarketDataViewModel: ObservableObject {
             case .success(let message):
                 switch message {
                 case .string(let text):
+                    print("Received WebSocket message: \(text)")
                     self?.handleWebSocketMessage(text)
                 case .data:
                     print("Received data message")
                 @unknown default:
                     break
                 }
-                self?.receiveWebSocketMessages() // Continue listening
+                self?.receiveWebSocketMessages()
             case .failure(let error):
                 DispatchQueue.main.async {
                     self?.isLoading = false
                     self?.errorMessage = "WebSocket receive error: \(error.localizedDescription)"
-                    // Optionally retry with REST
-                    if let symbols = self?.stockData.map({ $0.symbol }) {
-                        self?.fetchStockData(symbols: symbols)
-                    }
+                    print("WebSocket receive error: \(error.localizedDescription)")
+                    let symbols = self?.stockData.map({ $0.symbol }).uniqued() ?? []
+                    self?.reconnectWebSocket(symbols: Array(symbols))
                 }
             }
         }
     }
     
     private func handleWebSocketMessage(_ message: String) {
-        guard let data = message.data(using: .utf8),
-              let json = try? JSONSerialization.jsonObject(with: data, options: []),
-              let jsonArray = json as? [[String: Any]] else {
+        print("Raw WebSocket message received: \(message)")
+        
+        guard let data = message.data(using: .utf8) else {
             DispatchQueue.main.async {
                 self.isLoading = false
-                self.errorMessage = "Invalid data format"
+                self.errorMessage = "Invalid message data"
+                print("Failed to convert message to data")
             }
             return
         }
         
-        for item in jsonArray {
-            if let event = item["ev"] as? String, event == "T",
-               let symbol = item["sym"] as? String,
-               let price = item["p"] as? Double,
-               let timestamp = item["t"] as? Int64 {
-                let date = Date(timeIntervalSince1970: TimeInterval(timestamp / 1000))
-                let stock = StockData(symbol: symbol, price: price, timestamp: date)
-                DispatchQueue.main.async {
-                    self.isLoading = false
-                    // Append and keep only the latest 100 entries per symbol
-                    self.stockData.append(stock)
-                    self.stockData = self.stockData
-                        .filter { $0.symbol == stock.symbol }
-                        .suffix(100)
-                        .sorted { $0.timestamp < $1.timestamp }
-                        + self.stockData.filter { $0.symbol != stock.symbol }
+        do {
+            if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+                print("Parsed JSON object: \(json)")
+                
+                if let event = json["ev"] as? String {
+                    print("Event type: \(event)")
                 }
-            } else if item["status"] as? String == "error" {
-                DispatchQueue.main.async {
-                    self.isLoading = false
-                    self.errorMessage = "API error: \(item["message"] as? String ?? "Unknown error")"
+                
+                if let event = json["ev"] as? String, event == "T",
+                   let symbol = json["sym"] as? String,
+                   let price = json["p"] as? Double,
+                   let timestamp = json["t"] as? Int64 {
+                    print("Processing trade data - Symbol: \(symbol), Price: \(price), Timestamp: \(timestamp)")
+                    
+                    let date = Date(timeIntervalSince1970: TimeInterval(timestamp / 1000)) // Milliseconds to seconds
+                    print("Converted date: \(date)")
+                    
+                    let stock = StockData(symbol: symbol, price: price, timestamp: date)
+                    DispatchQueue.main.async {
+                        self.isLoading = false
+                        self.updateStockData(stock)
+                        print("Updated stock data for \(symbol): \(price)")
+                    }
+                } else if let status = json["status"] as? String {
+                    print("Status message received: \(status)")
+                    if status == "error" {
+                        DispatchQueue.main.async {
+                            self.isLoading = false
+                            self.errorMessage = "API error: \(json["message"] as? String ?? "Unknown error")"
+                            print("API error: \(json["message"] as? String ?? "Unknown error")")
+                        }
+                    } else if status == "connected" {
+                        print("WebSocket connected successfully")
+                    }
                 }
+            } else if let jsonArray = try JSONSerialization.jsonObject(with: data, options: []) as? [[String: Any]] {
+                print("Parsed JSON array with \(jsonArray.count) items")
+                
+                for item in jsonArray {
+                    print("Processing array item: \(item)")
+                    
+                    if let event = item["ev"] as? String, event == "T",
+                       let symbol = item["sym"] as? String,
+                       let price = item["p"] as? Double,
+                       let timestamp = item["t"] as? Int64 {
+                        print("Processing trade data from array - Symbol: \(symbol), Price: \(price), Timestamp: \(timestamp)")
+                        
+                        let date = Date(timeIntervalSince1970: TimeInterval(timestamp / 1000)) // Milliseconds to seconds
+                        print("Converted date: \(date)")
+                        
+                        let stock = StockData(symbol: symbol, price: price, timestamp: date)
+                        DispatchQueue.main.async {
+                            self.isLoading = false
+                            self.updateStockData(stock)
+                            print("Updated stock data for \(symbol): \(price)")
+                        }
+                    }
+                }
+            }
+        } catch {
+            DispatchQueue.main.async {
+                self.isLoading = false
+                self.errorMessage = "JSON parsing error: \(error.localizedDescription)"
+                print("JSON parsing error: \(error.localizedDescription)")
+                print("Failed to parse message: \(message)")
             }
         }
     }
     
+    private func updateStockData(_ newStock: StockData) {
+        print("Updating stock data - Current count: \(stockData.count)")
+        stockData.append(newStock)
+        stockData.sort { $0.timestamp < $1.timestamp } // Sort by timestamp for charts
+        // Limit to last 100 entries to prevent memory issues
+        if stockData.count > 100 {
+            stockData.removeFirst(stockData.count - 100)
+        }
+        print("Updated stock data - New count: \(stockData.count)")
+        print("Current stock data: \(stockData.map { "\($0.symbol): \($0.price)" })")
+    }
+    
     func disconnectWebSocket() {
         webSocketTask?.cancel(with: .goingAway, reason: nil)
+        print("WebSocket disconnected")
     }
     
     func fetchStockData(symbols: [String]) {
         isLoading = true
         let symbolsString = symbols.joined(separator: ",")
         guard let url = URL(string: "https://api.polygon.io/v2/snapshot/locale/us/markets/stocks/tickers?tickers=\(symbolsString)&apiKey=\(apiKey)") else {
-            self.errorMessage = "Invalid REST URL"
+            DispatchQueue.main.async {
+                self.errorMessage = "Invalid REST URL"
+                self.isLoading = false
+            }
             return
         }
         
@@ -157,7 +240,16 @@ class MarketDataViewModel: ObservableObject {
             DispatchQueue.main.async {
                 self?.isLoading = false
                 self?.stockData = newStockData
+                print("Fetched stock data via REST: \(newStockData.map { "\($0.symbol): \($0.price)" })")
             }
         }.resume()
+    }
+}
+
+// Extension to get unique elements from a sequence
+extension Sequence where Element: Hashable {
+    func uniqued() -> [Element] {
+        var seen = Set<Element>()
+        return filter { seen.insert($0).inserted }
     }
 }

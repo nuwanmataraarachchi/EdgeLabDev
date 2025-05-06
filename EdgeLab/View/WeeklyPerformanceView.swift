@@ -96,6 +96,26 @@ struct WeeklyPerformanceView: View {
                             }
                         }
                         .padding(.vertical, 10)
+                        
+                        NavigationLink(destination: PsychologicalTrainingView()) {
+                            HStack {
+                                Image(systemName: "brain.head.profile")
+                                    .font(.title2)
+                                Text("Psychological Training")
+                                    .font(.headline)
+                            }
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.blue.opacity(0.3))
+                            .cornerRadius(10)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .stroke(Color.blue, lineWidth: 1)
+                            )
+                        }
+                        .padding(.horizontal)
+                        
                     }
                 }
             }
@@ -103,6 +123,7 @@ struct WeeklyPerformanceView: View {
         .onAppear {
             updateDateDisplay()
         }
+        
     }
     
     private func updateDateDisplay() {

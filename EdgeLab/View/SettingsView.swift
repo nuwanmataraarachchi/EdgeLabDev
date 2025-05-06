@@ -132,12 +132,12 @@ struct SettingsView: View {
                 
                 Spacer()
             }
-            .navigationBarItems(leading: Button(action: {
-                // Back action
-            }) {
-                Image(systemName: "chevron.left")
-                    .foregroundColor(.white)
-            })
+//            .navigationBarItems(leading: Button(action: {
+//                // Back action
+//            }) {
+//                Image(systemName: "chevron.left")
+//                    .foregroundColor(.white)
+//            })
             .sheet(isPresented: $isImagePickerPresented) {
                 ImagePicker(selectedImage: $selectedImage)
             }

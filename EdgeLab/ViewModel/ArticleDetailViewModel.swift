@@ -13,6 +13,11 @@ class ArticleDetailViewModel: ObservableObject {
     @Published var article: ArticleModel
     private let db = Firestore.firestore()
     
+    var isCurrentUserAuthor: Bool {
+        guard let userId = Auth.auth().currentUser?.uid else { return false }
+        return article.authorId == userId
+    }
+    
     init(article: ArticleModel) {
         self.article = article
     }
@@ -69,5 +74,15 @@ class ArticleDetailViewModel: ObservableObject {
                 "date": Timestamp(date: comment.date)
             ]])
         ])
+    }
+    
+    func deleteArticle(completion: @escaping () -> Void) {
+        db.collection("articles").document(article.id).delete { error in
+            if let error = error {
+                print("Error deleting article: \(error.localizedDescription)")
+            } else {
+                completion()
+            }
+        }
     }
 }
