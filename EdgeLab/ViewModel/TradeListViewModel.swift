@@ -15,6 +15,17 @@ struct Trade: Identifiable, Equatable {
     var outcome: String
     var gain: Double
     var notes: String
+    var risk: String
+    var rr: String
+    var entryCriteria: String
+    var grade: String
+    var session: String
+    var isSessionTrading: Bool
+    var chartViewURL: String
+    
+    static func == (lhs: Trade, rhs: Trade) -> Bool {
+        return lhs.id == rhs.id
+    }
 }
 
 class TradeListViewModel: ObservableObject {
@@ -49,8 +60,30 @@ class TradeListViewModel: ObservableObject {
                     let outcome = data["outcome"] as? String ?? "N/A"
                     let gain = data["gain"] as? Double ?? 0.0
                     let notes = data["notes"] as? String ?? ""
+                    let risk = data["risk"] as? String ?? "0"
+                    let rr = data["rr"] as? String ?? "0"
+                    let entryCriteria = data["entryCriteria"] as? String ?? ""
+                    let grade = data["grade"] as? String ?? "C"
+                    let session = data["session"] as? String ?? "N/A"
+                    let isSessionTrading = data["isSessionTrading"] as? Bool ?? false
+                    let chartViewURL = data["chartViewURL"] as? String ?? ""
                     
-                    return Trade(id: id, date: date, asset: asset, direction: direction, outcome: outcome, gain: gain, notes: notes)
+                    return Trade(
+                        id: id,
+                        date: date,
+                        asset: asset,
+                        direction: direction,
+                        outcome: outcome,
+                        gain: gain,
+                        notes: notes,
+                        risk: risk,
+                        rr: rr,
+                        entryCriteria: entryCriteria,
+                        grade: grade,
+                        session: session,
+                        isSessionTrading: isSessionTrading,
+                        chartViewURL: chartViewURL
+                    )
                 }
             }
     }

@@ -8,7 +8,7 @@
 import Foundation
 
 struct StockData: Identifiable, Codable {
-    var id = UUID()
+    var id: String { symbol }
     let symbol: String
     let price: Double
     let timestamp: Date

@@ -15,13 +15,22 @@ struct CommunityView: View {
     var body: some View {
         NavigationView {
             ZStack {
+                Color.black
+                    .ignoresSafeArea()
+                
                 VStack(spacing: 20) {
-                    // Community Articles Section
                     VStack(alignment: .center) {
+                        Text("Browse trading insights, strategies, and experiences shared by fellow traders in the community.")
+                            .font(.subheadline)
+                            .foregroundColor(.gray)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal)
+                            .padding(.top)
+                        
                         Text("Community")
                             .font(.title)
                             .fontWeight(.bold)
-                            .padding(.top)
+                            .foregroundColor(.white)
                         
                         if viewModel.othersArticles.isEmpty {
                             Text("No Article to Show")
@@ -30,7 +39,7 @@ struct CommunityView: View {
                                 .padding()
                                 .overlay(
                                     Rectangle()
-                                        .stroke(Color.black, lineWidth: 0)
+                                        .stroke(Color.gray.opacity(0.3), lineWidth: 1)
                                         .frame(height: 200)
                                 )
                         } else {
@@ -48,24 +57,24 @@ struct CommunityView: View {
                         }
                     }
                     .frame(height: UIScreen.main.bounds.height / 3)
-                    
-                    // Your Articles Section
+
                     VStack(alignment: .leading) {
                         Text("Your Articles")
                             .font(.title2)
                             .fontWeight(.bold)
+                            .foregroundColor(.white)
                             .padding(.horizontal)
                         
                         if viewModel.userArticles.isEmpty {
-                            HStack(spacing: 10) {
-                                Rectangle()
-                                    .stroke(Color.black, lineWidth: 1)
-                                    .frame(width: 150, height: 100)
-                                Rectangle()
-                                    .stroke(Color.black, lineWidth: 1)
-                                    .frame(width: 150, height: 100)
-                            }
-                            .padding(.horizontal)
+                           Text("No Article to Show")
+                                .foregroundColor(.gray)
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .overlay(
+                                    Rectangle()
+                                        .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                                        .frame(height: 200)
+                                )
                         } else {
                             ScrollView(.horizontal, showsIndicators: false) {
                                 HStack(spacing: 15) {
@@ -85,7 +94,6 @@ struct CommunityView: View {
                     Spacer()
                 }
                 
-                // Floating Plus Button
                 VStack {
                     Spacer()
                     HStack {
@@ -96,13 +104,12 @@ struct CommunityView: View {
                             Image(systemName: "plus.circle.fill")
                                 .resizable()
                                 .frame(width: 50, height: 50)
-                                .foregroundColor(.gray)
+                                .foregroundColor(.white)
                         }
                         .padding()
                     }
                 }
                 
-                // Navigation Links
                 NavigationLink(
                     destination: NewPostView(),
                     isActive: $isShowingNewPost
@@ -120,12 +127,6 @@ struct CommunityView: View {
                     EmptyView()
                 }
             }
-            .navigationBarItems(leading: Button(action: {
-                // Back button action
-            }) {
-                Image(systemName: "chevron.left")
-                    .foregroundColor(.black)
-            })
         }
     }
 }
@@ -136,7 +137,6 @@ struct ArticleTile: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            // Thumbnail (if available)
             if let imageUrl = article.imageUrl, let url = URL(string: imageUrl) {
                 AsyncImage(url: url) { image in
                     image
@@ -147,6 +147,7 @@ struct ArticleTile: View {
                 } placeholder: {
                     ProgressView()
                         .frame(width: 150, height: 100)
+                        .tint(.white)
                 }
             } else {
                 Rectangle()
@@ -165,6 +166,7 @@ struct ArticleTile: View {
                 .font(.headline)
                 .lineLimit(2)
                 .frame(width: 150)
+                .foregroundColor(.white)
             
             // Stats
             HStack(spacing: 10) {

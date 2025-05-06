@@ -10,8 +10,8 @@ import FirebaseAuth
 
 struct ArticleModel: Identifiable {
     let id: String
-    let title: String
-    let content: String
+    var title: String
+    var content: String
     let category: String
     let authorId: String
     let authorName: String

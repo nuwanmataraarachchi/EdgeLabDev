@@ -19,7 +19,7 @@ struct SettingsView: View {
     var body: some View {
         NavigationView {
             VStack(spacing: 20) {
-                // Profile Picture with Edit Icon
+                // Profile Picture
                 VStack(spacing: 10) {
                     ZStack {
                         if let image = selectedImage {
@@ -53,34 +53,19 @@ struct SettingsView: View {
                     Text(user.username)
                         .font(.headline)
                         .foregroundColor(.white)
-                    Text(user.email)
-                        .font(.subheadline)
-                        .foregroundColor(.gray)
                 }
                 .padding(.top)
-                
-                // Edit Name and Email
-                Form {
-                    TextField("Username", text: $user.username)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                    TextField("Email", text: $user.email)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .keyboardType(.emailAddress)
-                        .autocapitalization(.none)
-                    Button("Save Changes") {
-                        user.updateProfile(email: user.email, username: user.username, tradingPreferences: user.tradingPreferences)
-                    }
-                    .padding()
-                    .background(Color.green)
-                    .foregroundColor(.white)
-                    .cornerRadius(8)
-                }
                 
                 // Stats Section
                 HStack(spacing: 10) {
                     StatCard(title: "Win Rate", value: "\(String(format: "%.1f", report.winRate))%", color: .green)
-                    StatCard(title: "Net P&L", value: "\(String(format: "%.2f", report.profitLoss))", color: report.profitLoss >= 0 ? .green : .red)
+                    StatCard(title: "Ave. Profit", value: "\(String(format: "%.2f", report.profitLoss))", color: report.profitLoss >= 0 ? .green : .red)
+                }
+                .padding(.horizontal)
+                
+                HStack(spacing: 10) {
                     StatCard(title: "Trades", value: "\(report.tradeFrequency)", color: .blue)
+                    StatCard(title: "Loses", value: "\(report.tradeFrequency)", color: .red) // Assuming loses uses same data for now
                 }
                 .padding(.horizontal)
                 
@@ -91,7 +76,7 @@ struct SettingsView: View {
                     }
                     .padding()
                     .frame(maxWidth: .infinity)
-                    .background(Color.red)
+                    .background(Color.gray.opacity(0.3))
                     .foregroundColor(.white)
                     .cornerRadius(8)
                     .alert(isPresented: $showingLogoutAlert) {
@@ -118,7 +103,7 @@ struct SettingsView: View {
                     }
                     .padding()
                     .frame(maxWidth: .infinity)
-                    .background(Color.red.opacity(0.7))
+                    .background(Color.gray.opacity(0.3))
                     .foregroundColor(.white)
                     .cornerRadius(8)
                     .alert(isPresented: $showingDeleteAlert) {
@@ -147,11 +132,17 @@ struct SettingsView: View {
                 
                 Spacer()
             }
-            .navigationBarTitle("Settings", displayMode: .inline)
+//            .navigationBarItems(leading: Button(action: {
+//                // Back action
+//            }) {
+//                Image(systemName: "chevron.left")
+//                    .foregroundColor(.white)
+//            })
             .sheet(isPresented: $isImagePickerPresented) {
                 ImagePicker(selectedImage: $selectedImage)
             }
-            .background(Color.white)        }
+            .background(Color.black.edgesIgnoringSafeArea(.all))
+        }
     }
 }
 
@@ -189,14 +180,6 @@ struct ImagePicker: UIViewControllerRepresentable {
         func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
             picker.dismiss(animated: true)
         }
-    }
-}
-
-// Placeholder for SignInView (replace with actual implementation)
-struct SignInView: View {
-    var body: some View {
-        Text("Sign In View")
-            .navigationBarTitle("Sign In")
     }
 }
 

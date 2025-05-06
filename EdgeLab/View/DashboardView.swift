@@ -3,7 +3,6 @@
 //  EdgeLab
 //
 //  Created by Nuwan Mataraarachchi on 2025-04-24.
-//  Updated to include real-time market data on 2025-05-05.
 //
 
 import SwiftUI
@@ -16,7 +15,8 @@ struct DashboardView: View {
     let currentPage = "Home"
     
     var body: some View {
-        NavigationView {
+        print("DashboardView body rendered with \(marketDataViewModel.stockData.count) stocks")
+        return NavigationView {
             VStack(spacing: 20) {
                 // App Title
                 Text("")
@@ -38,16 +38,13 @@ struct DashboardView: View {
                         .font(.headline)
                         .padding(.top, 10)
                     
-                    if marketDataViewModel.isLoading {
-                        ProgressView()
-                            .frame(maxWidth: .infinity, alignment: .center)
-                    } else if let error = marketDataViewModel.errorMessage {
+                    if let error = marketDataViewModel.errorMessage {
                         Text(error)
                             .foregroundColor(.red)
                             .font(.subheadline)
                             .frame(maxWidth: .infinity, alignment: .center)
                     } else {
-                        ForEach(marketDataViewModel.stockData.sorted(by: { $0.symbol < $1.symbol })) { stock in
+                        ForEach(marketDataViewModel.stockData) { stock in
                             Text("\(stock.symbol): $\(String(format: "%.2f", stock.price))")
                                 .font(.title3)
                                 .padding(.vertical, 2)
@@ -56,7 +53,8 @@ struct DashboardView: View {
                         // Chart for a specific stock (e.g., AAPL)
                         if !marketDataViewModel.stockData.isEmpty {
                             MarketDataChart(
-                                stockData: marketDataViewModel.stockData.filter { $0.symbol == "AAPL" },
+                                stockData: marketDataViewModel.stockData
+                                    .filter { $0.symbol == "AAPL" && $0.timestamp > Date().addingTimeInterval(-600) },
                                 symbol: "AAPL"
                             )
                             .padding(.top, 10)
@@ -72,11 +70,22 @@ struct DashboardView: View {
                         .font(.headline)
                         .foregroundColor(.white)
                         .padding()
-                                        .frame(maxWidth: .infinity)
-                                        .background(Color.blue)
-                                        .cornerRadius(10)
-                                }
-                                .padding(.horizontal)
+                        .frame(maxWidth: .infinity)
+                        .background(Color.blue)
+                        .cornerRadius(10)
+                }
+                .padding(.horizontal)
+                
+                NavigationLink(destination: CommunityView()) {
+                    Text("Community")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(Color.blue)
+                        .cornerRadius(10)
+                }
+                .padding(.horizontal)
                 
                 Spacer()
                 
