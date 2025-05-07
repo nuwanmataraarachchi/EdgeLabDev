@@ -5,7 +5,6 @@
 //  Created by Nuwan Mataraarachchi on 2025-05-07.
 //
 
-
 import SwiftUI
 
 struct SessionAnalyticsView: View {
@@ -25,16 +24,7 @@ struct SessionAnalyticsView: View {
                             .font(.headline)
                             .foregroundColor(.white)
 
-                        // Gauge for win rate
-                        Gauge(value: stat.winRate, in: 0...100) {
-                            Text("Win Rate")
-                        } currentValueLabel: {
-                            Text(String(format: "%.1f%%", stat.winRate))
-                                .fontWeight(.bold)
-                                .foregroundColor(.white)
-                        }
-                        .gaugeStyle(.accessoryCircular) // Default circular style for iOS
-                        .accentColor(.green)  // You can change the color here
+                        CustomGradientGauge(value: stat.winRate)
 
                         HStack {
                             StatBlock(title: "Trades", value: "\(stat.totalTrades)", icon: "list.number")
@@ -55,8 +45,38 @@ struct SessionAnalyticsView: View {
         }
         .background(Color.black.edgesIgnoringSafeArea(.all))
         .onAppear {
-            viewModel.fetchTrades()  // Fetch the trades data when the view appears
+            viewModel.fetchTrades()
         }
+    }
+}
+
+struct CustomGradientGauge: View {
+    var value: Double // 0 to 100
+
+    var body: some View {
+        ZStack {
+            Circle()
+                .stroke(Color.white.opacity(0.1), lineWidth: 10)
+
+            Circle()
+                .trim(from: 0.0, to: CGFloat(value / 100))
+                .stroke(
+                    AngularGradient(
+                        gradient: Gradient(colors: [Color.red, Color.green]),
+                        center: .center,
+                        startAngle: .degrees(0),
+                        endAngle: .degrees(360)
+                    ),
+                    style: StrokeStyle(lineWidth: 10, lineCap: .round)
+                )
+                .rotationEffect(.degrees(-90))
+
+            Text(String(format: "%.1f%%", value))
+                .font(.subheadline)
+                .fontWeight(.bold)
+                .foregroundColor(.white)
+        }
+        .frame(width: 60, height: 60)
     }
 }
 
