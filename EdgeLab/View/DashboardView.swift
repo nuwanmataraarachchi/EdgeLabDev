@@ -12,6 +12,9 @@ struct DashboardView: View {
     @State private var winRate = 75.0
     @State private var riskReward = 1.5
     @State private var streak = 5
+    @State private var currentStreak = 0
+    @State private var tradeCount = 0
+    @State private var animatedTradeCount = 0
     let currentPage = "Home"
     
     var body: some View {
@@ -31,10 +34,56 @@ struct DashboardView: View {
                 }
                 .padding(.horizontal)
                 
-                // ✅ Rainbow Win Rate Gauge
-                WinRateGaugeView(winRate: winRate)
-                    .padding(.top, -10)
-
+                // ✅ Modern Win Rate Gauge + Animated Counter
+                HStack {
+                    WinRateGaugeView(winRate: winRate)
+                    
+                    // Animated counter on the right side
+                    VStack(spacing: 25) {
+                        VStack {
+                            Text("ProfitFactor")
+                                .font(.caption)
+                                .foregroundColor(.gray)
+                            
+                            Text("\(currentStreak)")
+                                .font(.system(size: 40, weight: .bold))
+                                .foregroundColor(.white)
+                                .padding()
+                                .background(Color.black)
+                                .cornerRadius(10)
+                        }
+                        
+                        VStack {
+                            Text("Trades")
+                                .font(.caption)
+                                .foregroundColor(.gray)
+                            
+                            Text("\(animatedTradeCount)")
+                                .font(.system(size: 40, weight: .bold))
+                                .foregroundColor(.white)
+                                .padding()
+                                .background(Color.black)
+                                .cornerRadius(10)
+                        }
+                    }
+                    .padding()
+                    .onAppear {
+                        withAnimation(.easeInOut(duration: 1)) {
+                            currentStreak = streak
+                        }
+                        
+                        tradeCount = 42 // ✅ Dummy trade count
+                        Timer.scheduledTimer(withTimeInterval: 0.05, repeats: true) { timer in
+                            if animatedTradeCount < tradeCount {
+                                animatedTradeCount += 1
+                            } else {
+                                timer.invalidate()
+                            }
+                        }
+                    }
+                }
+                .padding(.top, -10)
+                
                 // Market Data Section
                 VStack(alignment: .leading, spacing: 10) {
                     Text("Market Data")
@@ -186,14 +235,14 @@ struct BottomTrayButton<Destination: View>: View {
 // MARK: - Rainbow Gauge
 struct WinRateGaugeView: View {
     let winRate: Double // 0 to 100
-    
+
     var body: some View {
         ZStack {
             Gauge(value: winRate, in: 0...100) {
-                Text("Win Rate")
+                EmptyView()
             } currentValueLabel: {
                 Text("\(Int(winRate))%")
-                    .font(.title2)
+                    .font(.system(size: 32, weight: .bold))
                     .foregroundColor(.white)
             } minimumValueLabel: {
                 Text("0%")
@@ -202,15 +251,29 @@ struct WinRateGaugeView: View {
                 Text("100%")
                     .foregroundColor(.gray)
             }
-            .gaugeStyle(.accessoryCircular)
+            .gaugeStyle(.accessoryCircularCapacity)
             .tint(AngularGradient(
-                gradient: Gradient(colors: [.red, .orange, .yellow, .green, .blue, .purple, .red]),
+                gradient: Gradient(colors: [.red, .orange, .yellow, .green, .mint, .blue, .purple]),
                 center: .center,
                 startAngle: .degrees(0),
                 endAngle: .degrees(360)
             ))
+            .scaleEffect(1.5) // ✅ Enlarged gauge only
+
+            VStack {
+                Spacer()
+                Text("Win Rate")
+                    .font(.caption)
+                    .foregroundColor(.gray)
+                    .padding(.bottom, 10)
+            }
         }
-        .frame(width: 150, height: 150)
+        .frame(width: 220, height: 220)
+        .padding()
+        .background(
+            RoundedRectangle(cornerRadius: 20)
+                .fill(Color(.systemGray6).opacity(0.2))
+        )
     }
 }
 

@@ -11,27 +11,37 @@ struct TradeHistoryCalendarView: View {
     @State private var currentMonthOffset = 0
     private let currentDate = Date()
     
-    // State to hold the selected trade day summary for the popup
     @State private var selectedTrade: TradeDaySummary?
     
-    // Sample dummy data
     @State private var tradeSummaries: [TradeDaySummary] = [
         TradeDaySummary(date: Calendar.current.date(byAdding: .day, value: -1, to: Date())!, totalGain: 2.4, numberOfTrades: 2),
         TradeDaySummary(date: Calendar.current.date(byAdding: .day, value: -2, to: Date())!, totalGain: -1.3, numberOfTrades: 1),
-        TradeDaySummary(date: Calendar.current.date(byAdding: .day, value: -4, to: Date())!, totalGain: 0, numberOfTrades: 0),
+        TradeDaySummary(date: Calendar.current.date(byAdding: .day, value: -3, to: Date())!, totalGain: 0.5, numberOfTrades: 3),
+        TradeDaySummary(date: Calendar.current.date(byAdding: .day, value: -4, to: Date())!, totalGain: 0.0, numberOfTrades: 0),
+        TradeDaySummary(date: Calendar.current.date(byAdding: .day, value: -5, to: Date())!, totalGain: 3.7, numberOfTrades: 4),
+        TradeDaySummary(date: Calendar.current.date(byAdding: .day, value: -6, to: Date())!, totalGain: -2.0, numberOfTrades: 2),
+        TradeDaySummary(date: Calendar.current.date(byAdding: .day, value: -7, to: Date())!, totalGain: 1.2, numberOfTrades: 1),
+        TradeDaySummary(date: Calendar.current.date(byAdding: .day, value: -8, to: Date())!, totalGain: -0.4, numberOfTrades: 1),
+        TradeDaySummary(date: Calendar.current.date(byAdding: .day, value: -9, to: Date())!, totalGain: 0.0, numberOfTrades: 0),
+        TradeDaySummary(date: Calendar.current.date(byAdding: .day, value: -10, to: Date())!, totalGain: 0.9, numberOfTrades: 2),
+        TradeDaySummary(date: Calendar.current.date(byAdding: .day, value: -11, to: Date())!, totalGain: -3.1, numberOfTrades: 3),
+        TradeDaySummary(date: Calendar.current.date(byAdding: .day, value: -12, to: Date())!, totalGain: 2.2, numberOfTrades: 2),
+        TradeDaySummary(date: Calendar.current.date(byAdding: .day, value: -13, to: Date())!, totalGain: 1.5, numberOfTrades: 1),
+        TradeDaySummary(date: Calendar.current.date(byAdding: .day, value: -14, to: Date())!, totalGain: -0.8, numberOfTrades: 1),
+        TradeDaySummary(date: Calendar.current.date(byAdding: .day, value: -15, to: Date())!, totalGain: 0.0, numberOfTrades: 0)
     ]
-    
     var body: some View {
         VStack(spacing: 10) {
             // Month Header
             HStack {
                 Button(action: {
-                    if currentMonthOffset > -12 { // Limit backtracking to 12 months
+                    if currentMonthOffset > -12 {
                         currentMonthOffset -= 1
                     }
                 }) {
                     Image(systemName: "chevron.left")
                         .font(.title2)
+                        .foregroundColor(.white)
                 }
                 
                 Spacer()
@@ -39,20 +49,21 @@ struct TradeHistoryCalendarView: View {
                 Text(extractMonthYear())
                     .font(.title2)
                     .bold()
+                    .foregroundColor(.white)
                 
                 Spacer()
                 
                 Button(action: {
-                    // Allow moving to the next month if not already in the current month
                     if currentMonthOffset < 0 {
                         currentMonthOffset += 1
                     }
                 }) {
                     Image(systemName: "chevron.right")
                         .font(.title2)
-                        .opacity(currentMonthOffset < 0 ? 1 : 0.3)  // Disable future months button
+                        .opacity(currentMonthOffset < 0 ? 1 : 0.3)
+                        .foregroundColor(.white)
                 }
-                .disabled(currentMonthOffset >= 0) // Disable button when at the current month
+                .disabled(currentMonthOffset >= 0)
             }
             .padding(.horizontal)
             
@@ -81,26 +92,28 @@ struct TradeHistoryCalendarView: View {
                             Text("\(Calendar.current.component(.day, from: date))")
                                 .font(.caption2)
                                 .fontWeight(.bold)
+                                .foregroundColor(.white)
                             
                             if let summary = summary {
                                 Text(String(format: "%.1f", summary.totalGain))
                                     .font(.caption2)
+                                    .foregroundColor(.white)
                                 
                                 Text("\(summary.numberOfTrades)x")
                                     .font(.caption2)
+                                    .foregroundColor(.white)
                             }
                         }
                         .frame(maxWidth: .infinity, minHeight: 50)
                         .padding(6)
                         .background(tileBackground(for: summary))
                         .cornerRadius(10)
-                        .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
+                        .shadow(color: Color.black.opacity(0.5), radius: 4, x: 0, y: 2)
                         .overlay(
                             RoundedRectangle(cornerRadius: 10)
-                                .stroke(Color.white.opacity(0.2), lineWidth: 1)
+                                .stroke(Color.white.opacity(0.1), lineWidth: 1)
                         )
                         .onTapGesture {
-                            // Set the selected trade for the popup
                             if let summary = summary {
                                 selectedTrade = summary
                             }
@@ -113,14 +126,13 @@ struct TradeHistoryCalendarView: View {
             }
             .padding(.horizontal, 5)
         }
+        .background(Color.black.ignoresSafeArea())
         .navigationTitle("Calendar View")
         .navigationBarTitleDisplayMode(.inline)
         .sheet(item: $selectedTrade) { trade in
             TradeDetailPopupView(trade: trade)
         }
     }
-    
-    // MARK: - Helper Functions
     
     private func extractMonthYear() -> String {
         let formatter = DateFormatter()
@@ -131,17 +143,15 @@ struct TradeHistoryCalendarView: View {
     
     private func generateCurrentMonthDates() -> [Date] {
         var calendar = Calendar.current
-        calendar.firstWeekday = 2 // Monday start
+        calendar.firstWeekday = 2
         let currentMonth = calendar.date(byAdding: .month, value: currentMonthOffset, to: currentDate)!
         var dates: [Date] = []
         
         let range = calendar.range(of: .day, in: .month, for: currentMonth)!
         let firstOfMonth = calendar.date(from: calendar.dateComponents([.year, .month], from: currentMonth))!
         let weekday = calendar.component(.weekday, from: firstOfMonth)
+        let emptyBoxes = (weekday + 5) % 7
         
-        let emptyBoxes = (weekday + 5) % 7 // Monday start adjustment
-        
-        // Add empty spaces for alignment
         for _ in 0..<emptyBoxes {
             dates.append(Date.distantPast)
         }
@@ -164,17 +174,14 @@ struct TradeHistoryCalendarView: View {
     private func tileBackground(for summary: TradeDaySummary?) -> LinearGradient {
         if let summary = summary {
             if summary.totalGain > 0 {
-                // Green glass effect
-                return LinearGradient(gradient: Gradient(colors: [Color.green.opacity(0.3), Color.green.opacity(0.15)]),
+                return LinearGradient(gradient: Gradient(colors: [Color.green.opacity(0.4), Color.green.opacity(0.2)]),
                                       startPoint: .topLeading, endPoint: .bottomTrailing)
             } else if summary.totalGain < 0 {
-                // Red glass effect
-                return LinearGradient(gradient: Gradient(colors: [Color.red.opacity(0.3), Color.red.opacity(0.15)]),
+                return LinearGradient(gradient: Gradient(colors: [Color.red.opacity(0.4), Color.red.opacity(0.2)]),
                                       startPoint: .topLeading, endPoint: .bottomTrailing)
             }
         }
-        // Neutral glass effect
-        return LinearGradient(gradient: Gradient(colors: [Color.gray.opacity(0.2), Color.white.opacity(0.1)]),
+        return LinearGradient(gradient: Gradient(colors: [Color.gray.opacity(0.3), Color.gray.opacity(0.1)]),
                               startPoint: .topLeading, endPoint: .bottomTrailing)
     }
 }
@@ -187,19 +194,21 @@ struct TradeDetailPopupView: View {
             Text("Trade Details")
                 .font(.title)
                 .bold()
+                .foregroundColor(.white)
             
             Text("Date: \(formatDate(trade.date))")
                 .font(.subheadline)
+                .foregroundColor(.white)
             
             Text("Total Gain: \(String(format: "%.2f", trade.totalGain))")
                 .font(.subheadline)
+                .foregroundColor(.white)
             
             Text("Number of Trades: \(trade.numberOfTrades)")
                 .font(.subheadline)
+                .foregroundColor(.white)
             
-            Button(action: {
-                // Close the popup
-            }) {
+            Button(action: {}) {
                 Text("Close")
                     .font(.headline)
                     .foregroundColor(.blue)
@@ -207,6 +216,8 @@ struct TradeDetailPopupView: View {
         }
         .padding()
         .frame(maxWidth: 300)
+        .background(Color(.systemGray6).opacity(0.2))
+        .cornerRadius(12)
     }
     
     private func formatDate(_ date: Date) -> String {
@@ -222,5 +233,6 @@ struct TradeHistoryCalendarView_Previews: PreviewProvider {
         NavigationView {
             TradeHistoryCalendarView()
         }
+        .preferredColorScheme(.dark)
     }
 }
