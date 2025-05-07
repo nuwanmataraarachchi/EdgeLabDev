@@ -74,7 +74,7 @@ struct SettingsView: View {
                     Button("Log Out") {
                         showingLogoutAlert = true
                     }
-                    .padding()
+                    .padding(.vertical, 6)
                     .frame(maxWidth: .infinity)
                     .background(Color.gray.opacity(0.3))
                     .foregroundColor(.white)
@@ -101,7 +101,7 @@ struct SettingsView: View {
                     Button("Delete Account") {
                         showingDeleteAlert = true
                     }
-                    .padding()
+                    .padding(.vertical, 6)
                     .frame(maxWidth: .infinity)
                     .background(Color.gray.opacity(0.3))
                     .foregroundColor(.white)
@@ -129,6 +129,30 @@ struct SettingsView: View {
                     }
                 }
                 .padding(.horizontal)
+                
+                NavigationLink(destination: HelpView()) {
+                    Text("Help and Info")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .padding(.vertical, 6)
+                        .frame(maxWidth: .infinity)
+                        .background(Color.gray.opacity(0.3))
+                        .cornerRadius(8)
+                }
+                .padding(.horizontal)
+                
+                
+                NavigationLink(destination: AboutUsView()) {
+                    Text("About Us")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .padding(.vertical, 6)
+                        .frame(maxWidth: .infinity)
+                        .background(Color.gray.opacity(0.3))
+                        .cornerRadius(8)
+                }
+                .padding(.horizontal)
+                
                 
                 Spacer()
             }
