@@ -4,7 +4,6 @@
 //
 //  Created by Nuwan Mataraarachchi on 2025-04-24.
 //
-
 import SwiftUI
 
 struct DashboardView: View {
@@ -15,12 +14,33 @@ struct DashboardView: View {
     @State private var currentStreak = 0
     @State private var tradeCount = 0
     @State private var animatedTradeCount = 0
+    @State private var showLetters: [Bool] = Array(repeating: false, count: 7)
+    let logoText = Array("EDGELAB")
+    let animationDuration = 0.4
     let currentPage = "Home"
     
     var body: some View {
         NavigationView {
             VStack(spacing: 20) {
-                // App Title
+
+                //Animated EDGELAB Logo with adjusted padding
+                HStack(spacing: 0) {
+                    ForEach(0..<logoText.count, id: \.self) { index in
+                        Text(String(logoText[index]))
+                            .foregroundColor(index < 4 ? .white : .blue)
+                            .font(.system(size: 34, weight: .black, design: .default))
+                            .opacity(showLetters[index] ? 1 : 0)
+                            .offset(y: showLetters[index] ? 0 : 10)
+                            .animation(.easeOut(duration: animationDuration).delay(Double(index) * 0.07), value: showLetters[index])
+                    }
+                }
+                .padding(.top, 45) // Adjusted to make the logo lower
+                .onAppear {
+                    startLoopingAnimation()
+                }
+       
+
+                // App Title (was empty before)
                 Text("")
                     .font(.largeTitle)
                     .fontWeight(.bold)
@@ -28,9 +48,9 @@ struct DashboardView: View {
                 
                 // Key Metrics Section
                 HStack(spacing: 15) {
-                    MetricCard(title: "Win Rate", value: "\(Int(winRate))%")
-                    MetricCard(title: "Risk/Reward", value: "\(riskReward)")
-                    MetricCard(title: "Streak", value: "\(streak)")
+                    MetricCard(title: "Win Rate", value: "\(Int(winRate))%", height: 80)
+                    MetricCard(title: "Risk/Reward", value: "\(riskReward)", height: 80)
+                    MetricCard(title: "Streak", value: "\(streak)", height: 80)
                 }
                 .padding(.horizontal)
                 
@@ -124,7 +144,7 @@ struct DashboardView: View {
                     Text("Weekly Performance")
                         .font(.headline)
                         .foregroundColor(.white)
-                        .padding()
+                        .padding(.vertical, 6) // Adjusted height here
                         .frame(maxWidth: .infinity)
                         .background(Color.blue)
                         .cornerRadius(10)
@@ -136,7 +156,7 @@ struct DashboardView: View {
                     Text("Community")
                         .font(.headline)
                         .foregroundColor(.white)
-                        .padding()
+                        .padding(.vertical, 6) // Adjusted height here
                         .frame(maxWidth: .infinity)
                         .background(Color.blue)
                         .cornerRadius(10)
@@ -170,12 +190,31 @@ struct DashboardView: View {
             }
         }
     }
+    
+    // MARK: - Animated EDGELAB Logo
+    private func startLoopingAnimation() {
+        Timer.scheduledTimer(withTimeInterval: animationDuration * Double(logoText.count) + 1.2, repeats: true) { _ in
+            for i in 0..<logoText.count {
+                DispatchQueue.main.asyncAfter(deadline: .now() + Double(i) * 0.07) {
+                    withAnimation {
+                        showLetters[i] = true
+                    }
+                }
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + animationDuration * Double(logoText.count) + 0.6) {
+                withAnimation {
+                    showLetters = Array(repeating: false, count: 7)
+                }
+            }
+        }
+    }
 }
 
 // MARK: - MetricCard
 struct MetricCard: View {
     let title: String
     let value: String
+    let height: CGFloat
     
     var body: some View {
         VStack {
@@ -185,7 +224,7 @@ struct MetricCard: View {
                 .font(.title2)
                 .fontWeight(.semibold)
         }
-        .frame(width: 110, height: 100)
+        .frame(width: 110, height: height)
         .background(Color.blue.opacity(0.9))
         .foregroundColor(.white)
         .cornerRadius(12)
