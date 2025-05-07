@@ -21,6 +21,12 @@ struct NewPostView: View {
     var body: some View {
         NavigationView {
             VStack(alignment: .leading, spacing: 20) {
+                Text("New Post")
+                    .font(.title2)
+                    .bold()
+                    .foregroundColor(.primary)
+                    .padding(.horizontal)
+                
                 // Error Message
                 if let errorMessage = viewModel.errorMessage {
                     Text(errorMessage)
