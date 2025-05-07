@@ -1,7 +1,18 @@
 import SwiftUI
+import Charts
 
 struct AnalyticsView: View {
     @ObservedObject var viewModel = AnalyticsViewModel()
+
+    // Dummy data for the line chart
+    private let pnlData: [(date: Date, pnl: Double)] = [
+        (date: Calendar.current.date(from: DateComponents(year: 2024, month: 1, day: 23))!, pnl: -500),
+        (date: Calendar.current.date(from: DateComponents(year: 2024, month: 1, day: 25))!, pnl: 200),
+        (date: Calendar.current.date(from: DateComponents(year: 2024, month: 1, day: 27))!, pnl: 800),
+        (date: Calendar.current.date(from: DateComponents(year: 2024, month: 2, day: 1))!, pnl: 300),
+        (date: Calendar.current.date(from: DateComponents(year: 2024, month: 2, day: 5))!, pnl: 1200),
+        (date: Calendar.current.date(from: DateComponents(year: 2024, month: 2, day: 9))!, pnl: 600)
+    ]
 
     var body: some View {
         ScrollView {
@@ -90,13 +101,52 @@ struct AnalyticsView: View {
                 }
             }
 
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color.gray.opacity(0.4))
-                .frame(height: 120)
-                .overlay(
-                    Text("Graph Placeholder\n\(String(format: "%.2f", viewModel.accPnl))")
-                        .foregroundColor(.gray)
+            Chart {
+                ForEach(pnlData, id: \.date) { item in
+                    LineMark(
+                        x: .value("Date", item.date),
+                        y: .value("P&L", item.pnl)
+                    )
+                    .foregroundStyle(.blue)
+                    .lineStyle(StrokeStyle(lineWidth: 4, lineCap: .round))
+                    .interpolationMethod(.catmullRom)
+                }
+            }
+            .frame(height: 120)
+            .padding()
+            .background(
+                LinearGradient(
+                    gradient: Gradient(colors: [Color.gray.opacity(0.4), Color.gray.opacity(0.2)]),
+                    startPoint: .top,
+                    endPoint: .bottom
                 )
+            )
+            .cornerRadius(12)
+            .chartXAxis {
+                AxisMarks(values: .stride(by: .day, count: 7)) { value in
+                    AxisGridLine(stroke: StrokeStyle(lineWidth: 1, dash: [5, 5]))
+                        .foregroundStyle(.gray.opacity(0.5))
+                    AxisTick(stroke: StrokeStyle(lineWidth: 2))
+                        .foregroundStyle(.white)
+                    AxisValueLabel(format: .dateTime.month(.abbreviated).day(), anchor: .bottom)
+                        .foregroundStyle(.white)
+                }
+            }
+            .chartYAxis {
+                AxisMarks(position: .leading) { value in
+                    AxisGridLine(stroke: StrokeStyle(lineWidth: 1, dash: [5, 5]))
+                        .foregroundStyle(.gray.opacity(0.5))
+                    AxisTick(stroke: StrokeStyle(lineWidth: 2))
+                        .foregroundStyle(.white)
+                    AxisValueLabel(anchor: .leading)
+                        .foregroundStyle(.white)
+                }
+            }
+            .chartPlotStyle { plotArea in
+                plotArea
+                    .background(Color.black.opacity(0.1))
+                    .border(Color.gray.opacity(0.3), width: 1)
+            }
 
             HStack {
                 Text("Jan 23, 24")
